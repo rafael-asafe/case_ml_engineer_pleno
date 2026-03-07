@@ -1,0 +1,15 @@
+site_name: Case ML Engineer Pleno
+repo_url: https://github.com/rafael-asafe/case_ml_engineer_pleno
+repo_name: rafael-asafe/repo
+edit_uri: tree/main/docs
+
+
+theme:
+  name: material
+  palette:
+    primary: green
+    accent: light green
+  language: pt-BR
+
+extra_css:
+  - stylesheets/extra.css

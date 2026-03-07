@@ -46,3 +46,5 @@ pythonpath = ["pokeapi_etl"]
 [tool.taskipy.tasks]
 lint = 'ruff check'
 test = 'pytest'
+
+

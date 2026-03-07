@@ -1,0 +1,10 @@
+site_name: Case ML Engineer Pleno
+repo_url: https://github.com/rafael-asafe/case_ml_engineer_pleno
+repo_name: rafael-asafe/case_ml_engineer_pleno
+edit_url: tree/main/docs
+
+
+theme:
+  name: material
+  language: pt-BR
+

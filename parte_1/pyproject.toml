@@ -33,6 +33,10 @@ dev = [
 ]
 doc = ["mkdocs-material (>=9.7.4,<10.0.0)", "mkdocstrings (>=1.0.3,<2.0.0)"]
 
+[tool.ruff]
+include = ["pokeapi_etl/**/*.py"]
+
+
 [tool.pytest_env]
 
 

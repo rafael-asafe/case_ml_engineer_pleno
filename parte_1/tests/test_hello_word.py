@@ -1,4 +1,4 @@
-from pokeapi_etl.main import hello_word
+from main import hello_word
 
 
 def test_main():

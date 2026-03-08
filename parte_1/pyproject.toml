@@ -16,7 +16,6 @@ dependencies = [
 [tool.poetry]
 package-mode = false
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -33,10 +32,6 @@ dev = [
 ]
 doc = ["mkdocs-material (>=9.7.4,<10.0.0)", "mkdocstrings (>=1.0.3,<2.0.0)"]
 
-[tool.ruff]
-include = ["pokeapi_etl/**/*.py"]
-
-
 [tool.pytest_env]
 
 
@@ -46,5 +41,4 @@ pythonpath = ["pokeapi_etl"]
 [tool.taskipy.tasks]
 lint = 'ruff check'
 test = 'pytest'
-
-
+run = 'python main.py'

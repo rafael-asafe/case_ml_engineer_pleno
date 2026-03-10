@@ -1,52 +1,94 @@
 import time
 import uuid
+from functools import wraps
+from json import JSONDecodeError
+from typing import Callable, ParamSpec, TypeVar
 
 import hishel
 import hishel.httpx
 import httpx
 from httpx_retries import Retry, RetryTransport
 
-from utils.logger import logger
+from utils.logger import execution_id, logger
+from utils.settings import Settings
 
-retry = Retry(total=5, backoff_factor=0.5)
+retry = Retry(total=Settings().RETRY, backoff_factor=Settings().BACKOFF_FACTOR)
 
 retry_transport = RetryTransport(retry=retry)
 
-transport = hishel.httpx.SyncCacheTransport(
+transport_async = hishel.httpx.AsyncCacheTransport(
     next_transport=retry_transport,
-    storage=hishel.SyncSqliteStorage(),
+    storage=hishel.AsyncSqliteStorage(),
+)
+
+limits = httpx.Limits(
+    max_connections=Settings().CLIENT_MAX_CONNETIONS,  # No máximo 20 conexões abertas no total
+    max_keepalive_connections=Settings().MAX_KEEPALIVE_CONNECTIONS,  # Mantém 10 em espera para reuso
+    keepalive_expiry=Settings().KEEPALIVE_EXPIRY,  # Fecha conexões ociosas após 5s
 )
 
 
-def before_request(request: httpx.Request):
+def trata_erro_http_async(
+    func: Callable[ParamSpec, TypeVar],
+) -> Callable[ParamSpec, TypeVar]:
+    @wraps(func)
+    async def wrapper(*args: ParamSpec.args, **kwargs: ParamSpec.args) -> TypeVar:
+        try:
+            logger.debug(f'=== Iniciando {func.__name__}')
+
+            response = await func(*args, **kwargs)
+
+            logger.debug(f'Status HTTP: {response.status_code}')
+
+            response.raise_for_status()
+
+            return response
+
+        except httpx.HTTPStatusError as e:
+            logger.error(f'✗ Erro HTTP {e.response.status_code}: {e} ')
+            raise
+        except httpx.RequestError as e:
+            logger.error(f'✗ Erro de conexão: {e} ')
+            raise
+        except JSONDecodeError as e:
+            logger.error(f'✗ Erro no formato JSON: {e} ')
+            raise
+        except IOError as e:
+            logger.error(f'✗ Erro de I/O: {e} ')
+            raise
+        except Exception as e:
+            logger.exception(f'✗ Erro inesperado: {e} ')
+            raise
+
+    return wrapper
+
+
+# TODO - formatar melhor a saida
+async def before_request_async(request: httpx.Request) -> None:
     request_id = str(uuid.uuid4())
-    request.headers["X-Requests-ID"] = request_id
-    request.extensions["request_id"] = request_id
-    request.extensions["start_time"] = time.monotonic()
+    request.headers['X-Requests-ID'] = request_id
+    request.extensions['request_id'] = request_id
+    request.extensions['start_time'] = time.monotonic()
+    request.extensions['execution_id'] = execution_id
 
 
-def after_request(response: httpx.Response):
+async def after_request_async(response: httpx.Response) -> None:
     request = response.request
-    start = response.request.extensions.get("start_time", None)
+    start = response.request.extensions.get('start_time', None)
     if start:
         elapsed = time.monotonic() - start
     else:
         elapsed = None
 
     logger.info(
-        f"<pokeapi - extract> {request.method} {request.url} {response.status_code} "
-        f"{elapsed} {request.extensions.get('request_id')}"
+        f'<pokeapi - extract> {request.method} {request.url} {response.status_code} '
+        f'{elapsed} {request.extensions.get("request_id")}'
     )
 
 
-client = httpx.Client(
-    event_hooks={"request": [before_request], "response": [after_request]},
-    transport=transport,
-    base_url="https://pokeapi.co/api/v2/",
-)
-
 async_client = httpx.AsyncClient(
-    event_hooks={"request": [before_request], "response": [after_request]},
-    transport=transport,
-    base_url="https://pokeapi.co/api/v2/",
+    event_hooks={'request': [before_request_async], 'response': [after_request_async]},
+    transport=transport_async,
+    limits=limits,
+    base_url='https://pokeapi.co/api/v2/',
 )

@@ -1,16 +1,23 @@
+from asyncio import gather, run
+
 from api.api_handler import busca_lista_pokemons, busca_pokemon
 from storage.storage import OperadorArmazenamento
+from utils.settings import Settings
 
 
-def pokedex():
+async def main() -> None:
 
-    lista_pokemons = busca_lista_pokemons().json().get("results")
+    index_pokemons = await busca_lista_pokemons()
 
-    for poke in lista_pokemons:
-        pokemon_info = busca_pokemon(poke.get("url"))
-        OperadorArmazenamento.registra_dados_brutos(pokemon_info)
-        OperadorArmazenamento.registra_dados_bd(pokemon_info)
+    lista_retornos = await gather(*[
+        busca_pokemon(item_index.get('url')) for item_index in index_pokemons
+    ])
+    OperadorArmazenamento.registra_dados_brutos(
+        lista_retornos, Settings().NOME_PASTA_SOR, Settings().NOME_ARQUIVO_SOR
+    )
 
+    OperadorArmazenamento.registra_dados_bd(lista_retornos)
 
-if __name__ == "__main__":
-    pokedex()
+    OperadorArmazenamento.exporta_tabelas_bd()
+
+run(main())

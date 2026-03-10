@@ -3,29 +3,29 @@ from pydantic import BaseModel, Field, computed_field
 
 class PokemonTypeSchema(BaseModel):
     slot: int
-    type_description: dict[str, str] = Field(alias="type")
+    type_description: dict[str, str] = Field(alias="type", exclude=True)
 
     @computed_field
     def type_name(self) -> str:
-        return self.type_description.name
+        return self.type_description.get("name")
 
 
 class PokemonStatsSchema(BaseModel):
     base_stat: int
-    stat_description: dict[str, str] = Field(alias="stat")
+    stat_description: dict[str, str] = Field(alias="stat", exclude=True)
 
     @computed_field
     def stat_name(self) -> str:
-        return self.stat_description.get('name')
+        return self.stat_description.get("name")
 
 
 class PokemonAbilitySchema(BaseModel):
-    abilities_description: dict[str, str] = Field(alias="ability")
+    abilities_description: dict[str, str] = Field(alias="ability", exclude=True)
     is_hidden: bool
 
     @computed_field
     def ability_name(self) -> str:
-        return self.abilities_description.get('name')
+        return self.abilities_description.get("name")
 
 
 class PokemonSchema(BaseModel):
@@ -33,7 +33,7 @@ class PokemonSchema(BaseModel):
     name: str
     height: int
     weight: int
-    base_experience: int
+    base_experience: int | None = 0
     abilities: list[PokemonAbilitySchema]
     stats: list[PokemonStatsSchema]
     types: list[PokemonTypeSchema]

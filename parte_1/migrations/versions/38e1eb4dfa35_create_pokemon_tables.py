@@ -1,17 +1,18 @@
 """create pokemon tables
 
-Revision ID: fcff0e33e0da
+Revision ID: 38e1eb4dfa35
 Revises: 
-Create Date: 2026-03-09 17:08:33.642058
+Create Date: 2026-03-10 00:23:43.468133
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = 'fcff0e33e0da'
+revision: str = '38e1eb4dfa35'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -37,7 +38,7 @@ def upgrade() -> None:
     )
     op.create_table('pokemon_stats',
     sa.Column('stat_name', sa.String(), nullable=False),
-    sa.Column('base_stat', sa.String(), nullable=False),
+    sa.Column('base_stat', sa.Integer(), nullable=False),
     sa.Column('pokemon_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['pokemon_id'], ['pokemon.pokemon_id'], onupdate='cascade', ondelete='cascade'),
     sa.PrimaryKeyConstraint('stat_name', 'pokemon_id')

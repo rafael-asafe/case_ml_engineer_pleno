@@ -2,7 +2,23 @@
 
 ## instalar python e poetry 
 
+```bash
+sudo dnf install python3.14
+
+pip install pipx
+
+pipx install poetry 
+```
+
 ## instalar projeto  
+
+```bash
+cd parte_1
+
+source $(poetry env info -p)/bin/activate
+
+poetry install 
+``` 
 
 ## iniciar a aplicação 
 poetry run alembic revision --autogenerate -m "create pokemon tables"

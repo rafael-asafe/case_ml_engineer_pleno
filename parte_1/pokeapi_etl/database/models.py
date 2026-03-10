@@ -33,7 +33,7 @@ class PokemonStats:
     __tablename__ = "pokemon_stats"
 
     stat_name: Mapped[str] = mapped_column(primary_key=True)
-    base_stat: Mapped[str] 
+    base_stat: Mapped[int] 
     pokemon_id: Mapped[int] = mapped_column(ForeignKey("pokemon.pokemon_id", ondelete="cascade", onupdate="cascade"), primary_key=True,init=False)
 
     pokemon: Mapped["Pokemon"] = relationship("Pokemon", back_populates="stats", init=False)

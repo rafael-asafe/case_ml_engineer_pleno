@@ -8,4 +8,14 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: str
     CONSOLE_LOG: bool
-    TIMEOUT_SEC: float
+    DATABASE_URL: str
+    NOME_PASTA_SOR: str
+    NOME_ARQUIVO_SOR: str
+    NOME_PASTA_SOT: str
+    CAMINHO_DADOS: str
+    LIMIT_OFFSET:int
+    RETRY:int
+    BACKOFF_FACTOR: float
+    CLIENT_MAX_CONNETIONS: int
+    MAX_KEEPALIVE_CONNECTIONS:int
+    KEEPALIVE_EXPIRY: float

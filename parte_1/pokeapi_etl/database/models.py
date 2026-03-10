@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, registry
+from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
 table_registry = registry()
 
@@ -12,36 +12,39 @@ class Pokemon:
     name: Mapped[str]
     height: Mapped[int]
     weight: Mapped[int]
-    base_experience: Mapped[int]
+    base_experience: Mapped[int] = mapped_column(default=0)
+
+    abilities: Mapped[list["PokemonAbility"]] = relationship(back_populates="pokemon", cascade="all, delete-orphan",default_factory=list)
+    stats: Mapped[list["PokemonStats"]] = relationship(back_populates="pokemon", cascade="all, delete-orphan",default_factory=list)
+    types: Mapped[list["PokemonType"]] = relationship(back_populates="pokemon", cascade="all, delete-orphan",default_factory=list)
 
 
 @table_registry.mapped_as_dataclass
 class PokemonType:
     __tablename__ = "pokemon_type"
 
-    pokemon_id: Mapped[int] = ForeignKey(
-        "pokemon.id_regiao", ondelete="cascade", onupdate="cascade", primary_key=True
-    )
     type_name: Mapped[str] = mapped_column(primary_key=True)
+    pokemon_id: Mapped[int] = mapped_column(ForeignKey("pokemon.pokemon_id", ondelete="cascade", onupdate="cascade"), primary_key=True,init=False)
 
+    pokemon: Mapped["Pokemon"] = relationship("Pokemon", back_populates="types", init=False)
 
 @table_registry.mapped_as_dataclass
 class PokemonStats:
     __tablename__ = "pokemon_stats"
 
-    pokemon_id: Mapped[int] = ForeignKey(
-        "pokemon.id_regiao", ondelete="cascade", onupdate="cascade"
-    )
-    stat_name: Mapped[str]
-    base_stat: Mapped[str]
+    stat_name: Mapped[str] = mapped_column(primary_key=True)
+    base_stat: Mapped[str] 
+    pokemon_id: Mapped[int] = mapped_column(ForeignKey("pokemon.pokemon_id", ondelete="cascade", onupdate="cascade"), primary_key=True,init=False)
 
+    pokemon: Mapped["Pokemon"] = relationship("Pokemon", back_populates="stats", init=False)
 
 @table_registry.mapped_as_dataclass
 class PokemonAbility:
     __tablename__ = "pokemon_ability"
 
-    pokemon_id: Mapped[int] = ForeignKey(
-        "pokemon.id_regiao", ondelete="cascade", onupdate="cascade"
-    )
-    ability_name: Mapped[str]
+    ability_name: Mapped[str] = mapped_column(primary_key=True)
     is_hidden: Mapped[bool]
+
+    pokemon_id: Mapped[int] = mapped_column(ForeignKey("pokemon.pokemon_id", ondelete="cascade", onupdate="cascade"), primary_key=True,init=False)
+
+    pokemon: Mapped["Pokemon"] = relationship("Pokemon", back_populates="abilities", init=False)

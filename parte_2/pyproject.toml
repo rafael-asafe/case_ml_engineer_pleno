@@ -1,5 +1,5 @@
 [project]
-name = "microservice_model_serving"
+name = "microservice_nre"
 version = "0.1.0"
 description = ""
 authors = [{ name = "rafael-asafe", email = "asafe.ferr@gmail.com" }]
@@ -7,7 +7,6 @@ requires-python = ">=3.14,<4.0"
 dependencies = [
     "pydantic-settings (>=2.13.1,<3.0.0)",
     "httpx (>=0.28.1,<0.29.0)",
-    "sqlalchemy (>=2.0.48,<3.0.0)",
     "alembic (>=1.18.4,<2.0.0)",
     "fastapi[standard] (>=0.135.1,<0.136.0)",
     "asyncio (>=4.0.0,<5.0.0)",
@@ -36,15 +35,30 @@ dev = [
 doc = ["mkdocs-material (>=9.7.4,<10.0.0)", "mkdocstrings (>=1.0.3,<2.0.0)"]
 
 [tool.ruff]
-include = ["pokeapi_etl/**/*.py"]
+include = ["app/**/*.py"]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = 'single'
+
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "ANN","I"]
+isort.known-first-party = ["database","utils","microservice_nre"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"{tests,docs,tools}/*" = ["E402","ANN"]
 
 
 [tool.pytest_env]
 
 
 [tool.pytest.ini_options]
-pythonpath = ["pokeapi_etl"]
+pythonpath = ["."]
+asyncio_default_fixture_loop_scope = 'function'
 
 [tool.taskipy.tasks]
 lint = 'ruff check'
 test = 'pytest'
+run = 'fastapi dev microservice_nre/main.py'

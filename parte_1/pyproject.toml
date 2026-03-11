@@ -12,6 +12,7 @@ dependencies = [
     "sqlalchemy (>=2.0.48,<3.0.0)",
     "alembic (>=1.18.4,<2.0.0)",
     "polars (>=1.38.1,<2.0.0)",
+    "pyarrow (>=23.0.1,<24.0.0)",
 ]
 
 [tool.poetry]
@@ -30,22 +31,39 @@ dev = [
     "taskipy (>=1.14.1,<2.0.0)",
     "pytest-env (>=1.5.0,<2.0.0)",
     "respx (>=0.22.0,<0.23.0)",
+    "factory-boy (>=3.3.1,<4.0.0)",
+    "faker (>=37.0.0,<38.0.0)",
 ]
 doc = ["mkdocs-material (>=9.7.4,<10.0.0)", "mkdocstrings (>=1.0.3,<2.0.0)"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "B", "ANN","I"]
 ignore = ["E501"]
-isort.known-first-party = ["api","database","storage","utils","pokeapi_etl"]
+isort.known-first-party = ["api","database","storage","utils","pokeapi_etl","factories"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
-"**/{tests,docs,tools}/*" = ["E402"]
+"**/{tests,docs,tools,data}/*" = ["E402","ANN"]
+"*.ipynb" = ["F821"]
 
 [tool.ruff.format]
 quote-style = 'single'
 
 [tool.pytest_env]
+LOG_LEVEL = "DEBUG"
+CONSOLE_LOG = "false"
+DATABASE_URL = "sqlite:///:memory:"
+NOME_PASTA_SOR = "SOR/pokemons/today_date/"
+NOME_ARQUIVO_SOR = "pokemons.jsonl"
+NOME_PASTA_SOT = "SOT/"
+CAMINHO_DADOS = "/tmp/pokeapi_test/"
+LIMIT_OFFSET = "20"
+RETRY = "1"
+BACKOFF_FACTOR = "0.1"
+CLIENT_MAX_CONNECTIONS = "5"
+MAX_KEEPALIVE_CONNECTIONS = "2"
+KEEPALIVE_EXPIRY = "5"
+POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/"
 
 
 [tool.pytest.ini_options]

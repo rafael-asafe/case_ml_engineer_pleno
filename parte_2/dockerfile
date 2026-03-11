@@ -13,7 +13,11 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 WORKDIR /app
 
+<<<<<<< HEAD
 
 COPY ./app /app
+=======
+COPY ./microservice_nre /app
+>>>>>>> develop
 
 CMD ["fastapi", "run", "main.py", "--port", "80"]

@@ -1,0 +1,7 @@
+services:
+  pokeapi-etl:
+    build: .
+    env_file: .env
+    volumes:
+      - ./data:/app/pokeapi_etl/data
+      - ./database.db:/app/pokeapi_etl/database.db

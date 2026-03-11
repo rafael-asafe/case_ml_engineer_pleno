@@ -16,7 +16,7 @@ async def busca_pagina(
     return response
 
 
-async def paginacao(url: int, async_client: AsyncClient = async_client) -> list:
+async def paginacao(url: str, async_client: AsyncClient = async_client) -> list[dict[str, str]]:
     paginas = []
     retorno = await async_client.get(url)
     paginas += retorno.json()['results']
@@ -32,7 +32,7 @@ async def paginacao(url: int, async_client: AsyncClient = async_client) -> list:
     return paginas
 
 
-async def busca_lista_pokemons() -> list[Response]:
+async def busca_lista_pokemons() -> list[dict[str, str]]:
     retornos = await paginacao('/pokemon')
     return retornos
 

@@ -12,6 +12,9 @@ from httpx_retries import Retry, RetryTransport
 from utils.logger import execution_id, logger
 from utils.settings import Settings
 
+P = ParamSpec('P')
+T = TypeVar('T')
+
 retry = Retry(total=Settings().RETRY, backoff_factor=Settings().BACKOFF_FACTOR)
 
 retry_transport = RetryTransport(retry=retry)
@@ -22,17 +25,15 @@ transport_async = hishel.httpx.AsyncCacheTransport(
 )
 
 limits = httpx.Limits(
-    max_connections=Settings().CLIENT_MAX_CONNETIONS,  # No máximo 20 conexões abertas no total
-    max_keepalive_connections=Settings().MAX_KEEPALIVE_CONNECTIONS,  # Mantém 10 em espera para reuso
-    keepalive_expiry=Settings().KEEPALIVE_EXPIRY,  # Fecha conexões ociosas após 5s
+    max_connections=Settings().CLIENT_MAX_CONNECTIONS,
+    max_keepalive_connections=Settings().MAX_KEEPALIVE_CONNECTIONS,
+    keepalive_expiry=Settings().KEEPALIVE_EXPIRY,
 )
 
 
-def trata_erro_http_async(
-    func: Callable[ParamSpec, TypeVar],
-) -> Callable[ParamSpec, TypeVar]:
+def trata_erro_http_async(func: Callable[P, T]) -> Callable[P, T]:
     @wraps(func)
-    async def wrapper(*args: ParamSpec.args, **kwargs: ParamSpec.args) -> TypeVar:
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         try:
             logger.debug(f'=== Iniciando {func.__name__}')
 
@@ -63,7 +64,6 @@ def trata_erro_http_async(
     return wrapper
 
 
-# TODO - formatar melhor a saida
 async def before_request_async(request: httpx.Request) -> None:
     request_id = str(uuid.uuid4())
     request.headers['X-Requests-ID'] = request_id
@@ -90,5 +90,5 @@ async_client = httpx.AsyncClient(
     event_hooks={'request': [before_request_async], 'response': [after_request_async]},
     transport=transport_async,
     limits=limits,
-    base_url='https://pokeapi.co/api/v2/',
+    base_url=Settings().POKEAPI_BASE_URL,
 )

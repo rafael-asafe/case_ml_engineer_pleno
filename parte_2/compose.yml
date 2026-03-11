@@ -1,0 +1,27 @@
+services:
+  migrate:
+    build: .
+    command: alembic upgrade head
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "sqlite:////data/database.db"
+    volumes:
+      - ./data:/data
+
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "sqlite+aiosqlite:////data/database.db"
+      LOG_FILE: "/data/logs/app.log"
+    volumes:
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped

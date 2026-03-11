@@ -104,12 +104,4 @@ database.db                         # banco SQLite com todas as tabelas
 
 - importe as tabelas no notebook
 
-
-## Modelagem de dados
-
-Sugestão: padronizar o nome dos campos 
-
-pokemon_id:
-pokemon_name:
-
-etc
+- execute notebook

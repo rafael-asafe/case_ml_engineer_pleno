@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     LIMIT_OFFSET:int
     RETRY:int
     BACKOFF_FACTOR: float
-    CLIENT_MAX_CONNETIONS: int
-    MAX_KEEPALIVE_CONNECTIONS:int
+    CLIENT_MAX_CONNECTIONS: int
+    MAX_KEEPALIVE_CONNECTIONS: int
     KEEPALIVE_EXPIRY: float
+    POKEAPI_BASE_URL: str

@@ -31,7 +31,7 @@ def exporta_para_parquet(nome_tabela: str, destino_tabela: str, engine: Engine =
     
 @contextmanager
 def get_session() -> Session:
-    """Context manager that yields a database session."""
+    """gerenciado de contexto para persistir a sessão"""
     session = SessionLocal()
     try:
         yield session

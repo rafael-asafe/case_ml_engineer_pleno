@@ -69,11 +69,8 @@ class PredictRequest(BaseModel):
 
 
 class PredictResponse(BaseModel):
-    """Resposta do endpoint de inferência NER.
+    """Resposta do endpoint de inferência NER."""
 
-    Attributes:
-        entities: Dicionário mapeando label da entidade ao texto extraído
-            (ex: ``{"PER": "João Silva", "LOC": "São Paulo"}``).
-    """
-
-    entities: dict[str, str]
+    money: str = ''
+    person: str = ''
+    date: str = ''

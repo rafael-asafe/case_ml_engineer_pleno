@@ -4,11 +4,14 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from microservice_nre.database.models import MLModel
+from microservice_nre.database.schemas import PredictResponse
 
 
 def test_predict_returns_entities(client):
     mock_service = MagicMock()
-    mock_service.process_text = AsyncMock(return_value={'PER': 'João'})
+    mock_service.process_text = AsyncMock(
+        return_value=PredictResponse(person='João', money='', date='')
+    )
     client.app.state.service = mock_service
 
     with patch(
@@ -22,12 +25,12 @@ def test_predict_returns_entities(client):
         )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'entities': {'PER': 'João'}}
+    assert response.json() == {'money': '', 'person': 'João', 'date': ''}
 
 
 def test_predict_returns_empty_entities(client):
     mock_service = MagicMock()
-    mock_service.process_text = AsyncMock(return_value={})
+    mock_service.process_text = AsyncMock(return_value=PredictResponse())
     client.app.state.service = mock_service
 
     with patch(
@@ -41,7 +44,7 @@ def test_predict_returns_empty_entities(client):
         )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'entities': {}}
+    assert response.json() == {'money': '', 'person': '', 'date': ''}
 
 
 def test_predict_logs_to_db_when_model_registered(client):
@@ -49,7 +52,7 @@ def test_predict_logs_to_db_when_model_registered(client):
     mock_model.model_version = 1
 
     mock_service = MagicMock()
-    mock_service.process_text = AsyncMock(return_value={'LOC': 'Brasil'})
+    mock_service.process_text = AsyncMock(return_value=PredictResponse())
     client.app.state.service = mock_service
 
     with patch(

@@ -15,11 +15,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from microservice_nre.database.database import engine
 from microservice_nre.database.models import MLModel
+from microservice_nre.services.model_downloader import download_model
 from microservice_nre.services.spacy_service import SpacyService
 from microservice_nre.utils.logger import logger
 from microservice_nre.utils.settings import Settings
 
 _s = Settings()
+
+
+async def preload_model(model_name: str) -> None:
+    try:
+        async with AsyncSession(engine, expire_on_commit=False) as session:
+            existing = (
+                await session.execute(select(MLModel).where(MLModel.model == model_name))
+            ).scalar_one_or_none()
+            if not existing:
+                model_obj = MLModel(model=model_name)
+                session.add(model_obj)
+                await session.commit()
+                await session.refresh(model_obj)
+            await download_model(model_name)
+            logger.debug(f'Preload do modelo {model_name} foi bem sucedido')
+    except Exception as e:
+        logger.warning(f'Preload falhou para {model_name}: {e}')
 
 
 @asynccontextmanager
@@ -48,10 +66,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     service = SpacyService()
     app.state.service = service
 
+    modelos = set(_s.MODEL_PRELOAD)
+    await asyncio.gather(*[preload_model(modelo) for modelo in modelos])
+
     async with AsyncSession(engine, expire_on_commit=False) as session:
         registered = (await session.execute(select(MLModel))).scalars().all()
 
-    names_to_load = {m.model for m in registered} | set(_s.MODEL_PRELOAD)
+    names_to_load = {m.model for m in registered}
 
     for name in names_to_load:
         try:
@@ -62,7 +83,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
             logger.warning(f'Preload falhou para {name}: {e}')
 
     logger.info('Aplicação pronta')
-    yield
 
+    yield
+    logger.info('Iniciando shutdown...')
     service.clear()
     logger.info('Aplicação encerrada')

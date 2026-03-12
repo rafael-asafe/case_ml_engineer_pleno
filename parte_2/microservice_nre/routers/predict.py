@@ -32,15 +32,16 @@ async def predict(
     session: AsyncSession = Depends(get_session),  # noqa: B008
 ) -> PredictResponse:
     """Realiza inferência utilizando o modelo ativo ou uma versão específica."""
-    entities = await service.process_text(body.text, body.model)
-    result = PredictResponse(entities=entities)
     modelo_db = await registry.get_by_name(body.model, session)
+    result = await service.process_text(body.text, body.model)
     if modelo_db:
-        session.add(PredictLogs(
-            input=body.model_dump(),
-            output=result.model_dump(),
-            model_version=modelo_db.model_version,
-        ))
+        session.add(
+            PredictLogs(
+                input=body.model_dump(),
+                output=result.model_dump(),
+                model_version=modelo_db.model_version,
+            )
+        )
         await session.commit()
     return result
 

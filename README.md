@@ -51,58 +51,21 @@ pokeapi_etl/
 4. Persiste no banco SQLite
 5. Exporta 4 tabelas em Parquet → `data/SOT/`
 
-### Executar com Docker
+### Como executar 
+
+O passo a passo de como executar a aplicação pode ser acessado pelo servidor mkdocs ou no caminho direto:
+
+docs/projetos/analise_dado_pokeapi/como_executar.md
 
 ```bash
 cd parte_1
-
-# 1. Criar arquivo .env
-cat > .env << 'EOF'
-LOG_LEVEL=DEBUG
-CONSOLE_LOG=TRUE
-DATABASE_URL=sqlite:///database.db
-NOME_PASTA_SOR=SOR/pokemons/today_date/
-NOME_ARQUIVO_SOR=pokemons.jsonl
-NOME_PASTA_SOT=SOT/
-CAMINHO_DADOS=./data/
-LIMIT_OFFSET=20
-RETRY=5
-BACKOFF_FACTOR=0.5
-CLIENT_MAX_CONNECTIONS=50
-MAX_KEEPALIVE_CONNECTIONS=20
-KEEPALIVE_EXPIRY=10
-POKEAPI_BASE_URL=https://pokeapi.co/api/v2/
-EOF
-
-# 2. Criar estrutura de dados
-mkdir -p data
-touch database.db
-
-# 3. Executar
-docker compose up
+poetry --directory=./parte_1 install
+source $(poetry --directory=./parte_1 env info -p)/bin/activate
+mkdocs run 
 ```
+obs: o teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto. 
 
-**Saída esperada:**
-
-```
-data/
-├── SOR/pokemons/<ano>/<mes>/<dia>/pokemons.jsonl   # dados brutos
-└── SOT/
-    ├── pokemon/<ano>/<mes>/<dia>/pokemon.parquet
-    ├── pokemon_ability/<ano>/<mes>/<dia>/pokemon_ability.parquet
-    ├── pokemon_stats/<ano>/<mes>/<dia>/pokemon_stats.parquet
-    └── pokemon_type/<ano>/<mes>/<dia>/pokemon_type.parquet
-database.db                                          # banco SQLite
-```
-
-### Executar localmente
-
-```bash
-cd parte_1
-poetry install
-source $(poetry env info -p)/bin/activate
-poetry run task run
-```
+Documentação: `http://localhost:8000/docs`
 
 ### Testes
 
@@ -110,7 +73,6 @@ poetry run task run
 cd parte_1
 poetry run task test
 ```
-
 ---
 
 ## Parte 2 — Microserviço NER
@@ -127,11 +89,6 @@ microservice_nre/
 └── utils/        # Logger, settings e error handler
 ```
 
-**Componentes principais:**
-- **SpacyService**: gerencia modelos spaCy em memória (cache com limite configurável)
-- **ModelRegistry**: persiste registro de modelos no banco de dados
-- **Middleware**: injeta `X-Request-ID` e `X-Process-Time-MS` em cada request
-
 ### Endpoints
 
 | Método | Endpoint | Descrição |
@@ -143,64 +100,35 @@ microservice_nre/
 | `POST` | `/predict/` | Executa inferência NER |
 | `GET` | `/predict/list` | Histórico de predições |
 
-### Executar com Docker
+
+### Como executar
+
+O passo a passo de como executar a aplicação pode ser acessado pelo servidor mkdocs ou no caminho direto:
+
+docs/projetos/nre_service/como_executar.md
+
+obs: os dois projetos compartilham o mesma doc
 
 ```bash
-cd parte_2
-
-# 1. Criar arquivo .env
-cat > .env << 'EOF'
-LOG_LEVEL=INFO
-CONSOLE_LOG=true
-LOG_FILE=/data/logs/app.log
-DATABASE_URL=sqlite+aiosqlite:////data/database.db
-MAX_MODELS_IN_MEMORY=5
-MODEL_PRELOAD=["pt_core_news_sm"]
-MAX_TEXT_LENGTH=10000
-HEALTH_CHECK_INTERVAL=60
-METRICS_RETENTION_DAYS=30
-EOF
-
-# 2. Subir (migrate roda antes do app automaticamente)
-docker compose up --build
+cd parte_1
+poetry --directory=./parte_2 install
+source $(poetry --directory=./parte_2 env info -p)/bin/activate
+mkdocs run 
 ```
+obs: o teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto. 
 
-O compose executa dois serviços em sequência:
+Documentação: `http://localhost:8000`
 
-| Serviço | O que faz |
-|---------|-----------|
-| `migrate` | Roda `alembic upgrade head` — cria/atualiza as tabelas |
-| `app` | Sobe o FastAPI na porta `8000` (aguarda `migrate` concluir) |
+Documentação api: `http://localhost:8001/docs`
 
-### Uso da API
+### Testes
 
 ```bash
-# Health check
-curl http://localhost:8000/health
+cd parte_1
+poetry run task test
+``
 
-# Registrar modelo
-curl -X POST http://localhost:8000/models/load \
-  -H "Content-Type: application/json" \
-  -d '{"model": "pt_core_news_sm"}'
 
-# Inferência NER
-curl -X POST http://localhost:8000/predict/ \
-  -H "Content-Type: application/json" \
-  -d '{"text": "John Smith transferred $5,000 to Goldman Sachs in New York last Monday.", "model": "en_core_web_sm"}'
-```
-
-**Resposta da predição:**
-```json
-{
-  "entities": {
-    "PERSON": ["John Smith"],
-    "MONEY": ["$5,000"],
-    "DATE": ["last Monday"]
-  }
-}
-```
-
-Documentação interativa: `http://localhost:8000/docs`
 
 ### Executar localmente
 
@@ -217,24 +145,6 @@ poetry run task run
 cd parte_2
 poetry run task test
 ```
-
----
-
-## Documentação
-
-Para visualizar a documentação completa com MkDocs:
-
-```bash
-# Instalar MkDocs (a partir do ambiente virtual de qualquer projeto)
-cd parte_1
-source $(poetry env info -p)/bin/activate
-
-# Voltar à raiz e iniciar
-cd ..
-mkdocs serve
-```
-
-Acesse em `http://localhost:8000`.
 
 ---
 

@@ -1,1 +1,0 @@
-# Desenvolvimento do Micro Serviço de Model Serving

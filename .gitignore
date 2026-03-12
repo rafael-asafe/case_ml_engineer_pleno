@@ -4,6 +4,12 @@ __pycache__/
 *$py.class
 .vscode/
 
+parte_2/data/
+*.db
+*/migrations/versions/*
+*/data/SOT/*
+/data/SOR/*
+
 # C extensions
 *.so
 

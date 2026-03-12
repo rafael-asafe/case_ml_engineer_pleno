@@ -1,3 +1,14 @@
+"""Operações de armazenamento e persistência dos dados extraídos da PokéAPI.
+
+Contém a classe ``OperadorArmazenamento``, responsável pelas três etapas de carga:
+1. Gravação dos dados brutos em JSONL (camada SOR — System of Record).
+2. Persistência dos dados normalizados no banco de dados SQLite (camada ODS).
+3. Exportação das tabelas do banco para Parquet particionado por data (camada SOT).
+
+O particionamento por data segue o padrão ``YYYY/MM/DD``, substituindo a
+string literal ``'today_date'`` nos caminhos configurados.
+"""
+
 from datetime import date
 from pathlib import Path
 
@@ -18,14 +29,52 @@ from utils.settings import Settings
 
 
 class OperadorArmazenamento:
+    """Classe utilitária com métodos de classe para persistência dos dados de Pokémons.
+
+    Não possui estado de instância; todos os métodos são ``@classmethod`` para
+    facilitar o uso direto sem instanciação.
+    """
+
     @classmethod
     def _build_folder_path(cls, base: str) -> Path:
+        """Resolve e cria o diretório de destino substituindo ``'today_date'`` pela data atual.
+
+        Substitui a string literal ``'today_date'`` no caminho base pela data de
+        hoje formatada como ``'YYYY/MM/DD'``, criando toda a hierarquia de diretórios
+        necessária com ``mkdir(parents=True, exist_ok=True)``.
+
+        Args:
+            base: Caminho base com a string ``'today_date'`` a ser substituída
+                (ex.: ``'./data/SOR/pokemons/today_date/'``).
+
+        Returns:
+            Path: Objeto ``Path`` apontando para o diretório criado ou já existente
+                (ex.: ``Path('./data/SOR/pokemons/2026/03/11/')``).
+        """
         folder = Path(base.replace('today_date', date.today().strftime('%Y/%m/%d')))
         folder.mkdir(parents=True, exist_ok=True)
         return folder
 
     @classmethod
     def gerar_pokemons(cls, retornos: list[Response]) -> PokemonSchema:
+        """Gera instâncias de ``PokemonSchema`` a partir de uma lista de respostas HTTP.
+
+        Itera sobre as respostas, desserializa o JSON de cada uma e valida os dados
+        via Pydantic. Funciona como gerador para evitar carregar todos os Pokémons
+        em memória simultaneamente.
+
+        Args:
+            retornos: Lista de objetos ``httpx.Response`` retornados pelas chamadas
+                a ``busca_pokemon``. Cada resposta deve conter o JSON completo de
+                um Pokémon no formato da PokéAPI.
+
+        Yields:
+            PokemonSchema: Instância validada com os dados normalizados do Pokémon.
+
+        Raises:
+            pydantic.ValidationError: Se o JSON da resposta não corresponder ao
+                schema esperado por ``PokemonSchema``.
+        """
         for retorno in retornos:
             yield PokemonSchema(**retorno.json())
 
@@ -33,6 +82,23 @@ class OperadorArmazenamento:
     def registra_dados_brutos(
         cls, retornos: list[Response], nome_pasta: str, nome_arquivo: str
     ) -> None:
+        """Persiste os dados brutos dos Pokémons em um arquivo JSONL (camada SOR).
+
+        Cada linha do arquivo corresponde ao JSON serializado de um ``PokemonSchema``,
+        utilizando o formato JSONL (JSON Lines) para facilitar processamento incremental.
+        O arquivo é sobrescrito a cada execução.
+
+        Args:
+            retornos: Lista de respostas HTTP com os dados dos Pokémons.
+            nome_pasta: Subdiretório relativo a ``Settings().CAMINHO_DADOS`` onde o
+                arquivo será gravado. Deve conter ``'today_date'`` para particionamento
+                (ex.: ``'SOR/pokemons/today_date/'``).
+            nome_arquivo: Nome do arquivo de destino (ex.: ``'pokemons.jsonl'``).
+
+        Raises:
+            Exception: Propaga erros de I/O ou validação, registrando a mensagem
+                no logger antes de re-lançar.
+        """
         pokemons = cls.gerar_pokemons(retornos)
         folder = cls._build_folder_path(Settings().CAMINHO_DADOS + nome_pasta)
         filepath = folder / nome_arquivo
@@ -48,6 +114,25 @@ class OperadorArmazenamento:
 
     @classmethod
     def registra_dados_bd(cls, retornos: list[Response]) -> None:
+        """Persiste os dados normalizados dos Pokémons no banco de dados relacional.
+
+        Para cada Pokémon, verifica se já existe no banco (idempotência) antes de
+        inserir. Caso já esteja registrado, o Pokémon é ignorado com log de debug.
+        Habilidades, estatísticas e tipos são inseridos junto ao Pokémon pai em
+        uma única transação via cascade.
+
+        Args:
+            retornos: Lista de respostas HTTP com os dados dos Pokémons.
+
+        Raises:
+            Exception: Propaga erros de banco de dados (integridade, conexão, etc.),
+                realizando rollback automático via ``get_session()`` e registrando
+                a mensagem no logger antes de re-lançar.
+
+        Note:
+            A operação é idempotente: Pokémons já presentes no banco são ignorados,
+            permitindo que o pipeline seja reexecutado sem duplicar registros.
+        """
         try:
             pokemons = cls.gerar_pokemons(retornos)
 
@@ -95,6 +180,17 @@ class OperadorArmazenamento:
 
     @classmethod
     def exporta_tabelas_bd(cls) -> None:
+        """Exporta todas as tabelas do banco de dados para arquivos Parquet (camada SOT).
+
+        Itera sobre todas as tabelas registradas em ``table_registry.metadata`` e,
+        para cada uma, cria o diretório particionado por data e invoca
+        ``exporta_para_parquet``. O caminho de saída segue o padrão:
+        ``{CAMINHO_DADOS}/{NOME_PASTA_SOT}/{nome_tabela}/YYYY/MM/DD/{nome_tabela}.parquet``.
+
+        Raises:
+            Exception: Se a exportação de qualquer tabela falhar, o erro é logado
+                e re-lançado, interrompendo o processo para as tabelas restantes.
+        """
         for nome_tabela in table_registry.metadata.tables.keys():
             caminho_base = Settings().CAMINHO_DADOS + Settings().NOME_PASTA_SOT
             try:

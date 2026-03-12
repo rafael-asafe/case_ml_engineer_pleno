@@ -7,7 +7,7 @@ __pycache__/
 parte_2/data/
 *.db
 */data/SOT/*
-/data/SOR/*
+*/data/SOR/*
 
 # C extensions
 *.so

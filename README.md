@@ -120,22 +120,12 @@ Endereço de acesso a doc: `http://localhost:8000`
 
 Endereço de acesso a doc da api: `http://localhost:8001/docs`
 
-### Executar localmente
-
-```bash
-cd parte_2
-poetry install
-source $(poetry env info -p)/bin/activate
-poetry run task run
-```
-
 ### Testes
 
 ```bash
 cd parte_2
 poetry run task test
 ```
-
 ---
 
 ## Estrutura do Repositório

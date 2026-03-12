@@ -3,7 +3,13 @@ __pycache__/
 *.py[codz]
 *$py.class
 .vscode/
+
 parte_2/data/
+*.db
+*/migrations/versions/*
+*/data/SOT/*
+/data/SOR/*
+
 # C extensions
 *.so
 

@@ -193,8 +193,9 @@ curl -X POST http://localhost:8000/predict/ \
 ```json
 {
   "entities": {
-    "PER": "Lula",
-    "LOC": "São Paulo"
+    "PERSON": ["John Smith"],
+    "MONEY": ["$5,000"],
+    "DATE": ["last Monday"]
   }
 }
 ```

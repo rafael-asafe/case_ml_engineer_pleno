@@ -56,14 +56,14 @@ O compose executa dois serviços em ordem:
 | Serviço   | O que faz                                              | Quando termina          |
 |-----------|--------------------------------------------------------|-------------------------|
 | `migrate` | Roda `alembic upgrade head` — cria/atualiza as tabelas | Ao concluir com sucesso |
-| `app`     | Sobe o servidor FastAPI na porta `8000`                | Aguarda `migrate`       |
+| `app`     | Sobe o servidor FastAPI na porta `8001`                | Aguarda `migrate`       |
 
 ---
 
 ## Verificar se a aplicação está saudável
 
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8001/health
 ```
 
 Resposta esperada:
@@ -85,7 +85,7 @@ Resposta esperada:
 ### Registrar um modelo
 
 ```bash
-curl -X POST http://localhost:8000/models/load \
+curl -X POST http://localhost:8001/models/load \
   -H "Content-Type: application/json" \
   -d '{"model": "pt_core_news_sm"}'
 ```
@@ -95,13 +95,13 @@ curl -X POST http://localhost:8000/models/load \
 ### Listar modelos registrados
 
 ```bash
-curl http://localhost:8000/models/
+curl http://localhost:8001/models/
 ```
 
 ### Executar predição NER
 
 ```bash
-curl -X POST http://localhost:8000/predict/ \
+curl -X POST http://localhost:8001/predict/ \
   -H "Content-Type: application/json" \
   -d '{"text": "Lula visitou São Paulo ontem.", "model": "pt_core_news_sm"}'
 ```
@@ -120,13 +120,13 @@ Resposta esperada:
 ### Listar histórico de predições
 
 ```bash
-curl http://localhost:8000/predict/list
+curl http://localhost:8001/predict/list
 ```
 
 ### Remover um modelo
 
 ```bash
-curl -X DELETE http://localhost:8000/models/{version}
+curl -X DELETE http://localhost:8001/models/{version}
 ```
 
 ---
@@ -156,4 +156,4 @@ docker compose down -v
 | `POST`   | `/predict/`           | Executa inferência NER           |
 | `GET`    | `/predict/list`       | Lista histórico de predições     |
 
-Documentação interativa disponível em: `http://localhost:8000/docs`
+Documentação interativa disponível em: `http://localhost:8001/docs`

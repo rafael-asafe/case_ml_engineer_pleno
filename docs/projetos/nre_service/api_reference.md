@@ -2,7 +2,7 @@
 
 Documentação completa de todos os endpoints, schemas de entrada e saída, e códigos de resposta.
 
-> Documentação interativa (Swagger UI) disponível em `http://localhost:8000/docs` com a aplicação em execução.
+> Documentação interativa (Swagger UI) disponível em `http://localhost:8001/docs` com a aplicação em execução.
 
 ---
 

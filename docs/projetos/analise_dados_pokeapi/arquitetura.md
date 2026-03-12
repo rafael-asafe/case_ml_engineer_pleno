@@ -61,18 +61,6 @@ pokeapi_etl/
 
 ---
 
-## Fluxo de execução (`main.py`)
-
-```
-1. busca_lista_pokemons()     → lista paginada de URLs de pokémons
-2. busca_pokemon()            → detalhes de cada pokémon (paralelo via asyncio)
-3. registra_dados_brutos()    → salva raw JSONL em data/SOR/
-4. registra_dados_bd()        → insere registros no SQLite via SQLAlchemy
-5. exporta_tabelas_bd()       → exporta 4 tabelas para Parquet em data/SOT/
-```
-
----
-
 ## Decisões de implementação
 
 ### Cache HTTP com hishel

@@ -6,7 +6,6 @@ __pycache__/
 
 parte_2/data/
 *.db
-*/migrations/versions/*
 */data/SOT/*
 /data/SOR/*
 

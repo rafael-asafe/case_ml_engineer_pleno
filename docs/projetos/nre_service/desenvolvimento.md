@@ -46,7 +46,7 @@ poetry run task run
 fastapi dev microservice_nre/main.py
 ```
 
-Acesse `http://localhost:8000/docs` para a interface interativa.
+Acesse `http://localhost:8001/docs` para a interface interativa.
 
 ---
 
@@ -175,21 +175,10 @@ Qualquer modelo publicado no hub do spaCy pode ser registrado via API:
 
 ```bash
 # Registrar via endpoint
-curl -X POST http://localhost:8000/models/load \
+curl -X POST http://localhost:8001/models/load \
   -H "Content-Type: application/json" \
   -d '{"model": "en_core_web_sm"}'
 ```
 
 O download é realizado automaticamente. Modelos disponíveis em [spacy.io/models](https://spacy.io/models).
 
-Para novos tipos de entidade, adicione o mapeamento em `SpacyService.process_text()`:
-
-```python
-label_map = {
-    "MONEY": "money",
-    "PER": "person",
-    "DATE": "date",
-    # Adicione novos labels aqui
-    "ORG": "organization",
-}
-```

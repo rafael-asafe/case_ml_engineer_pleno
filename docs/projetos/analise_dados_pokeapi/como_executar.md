@@ -12,11 +12,12 @@ Pipeline ETL que extrai dados de todos os pokémons da [PokéAPI](https://pokeap
 
 ## Como executar
 
-### 1. Clone o repositório
+Após as etapas do README.md
+
+### 1. Acesse o repositório da parte_1
 
 ```bash
-git clone https://github.com/rafael-asafe/case_ml_engineer_pleno.git
-cd case_ml_engineer_pleno/parte_1
+cd parte_1
 ```
 
 ### 2. Configure o arquivo `.env`
@@ -51,19 +52,12 @@ KEEPALIVE_EXPIRY=10
 POKEAPI_BASE_URL=https://pokeapi.co/api/v2/
 ```
 
-### 3. Crie os arquivos de persistência local
-
-```bash
-mkdir -p data
-touch database.db
-```
-
-> O `database.db` precisa existir antes de subir o container — caso contrário o Docker cria um diretório no lugar.
-
 ### 4. Execute
 
 ```bash
 docker compose up
+# ou 
+docker compose --verbose up
 ```
 
 Na primeira execução a imagem será buildada automaticamente. Nas seguintes, use `--build` apenas se o código ou dependências mudarem:

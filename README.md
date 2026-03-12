@@ -14,7 +14,7 @@ Case técnico composto por dois projetos independentes de engenharia de dados e 
 ## Pré-requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) e [Docker Compose](https://docs.docker.com/compose/) v2.20+
-- [Python 3.13+](https://www.python.org/downloads/) (para desenvolvimento local)
+- [Python 3.13 e Python 3.14](https://www.python.org/downloads/) (para desenvolvimento local)
 - [Poetry](https://python-poetry.org/docs/) (gerenciador de dependências)
 
 ### Instalar Python e Poetry
@@ -60,10 +60,10 @@ O passo a passo de como executar a aplicação pode ser acessado pelo servidor m
 > Obs: o teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto.
 
 ```bash
-cd parte_1
+cd  case_ml_engineer_pleno
 poetry --directory=./parte_1 install
 source $(poetry --directory=./parte_1 env info -p)/bin/activate
-mkdocs run
+mkdocs serve
 ```
 
 Endereço de acesso a doc: `http://localhost:8000/docs`

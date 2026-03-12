@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from microservice_nre.database.schemas import PredictResponse
 from microservice_nre.services.spacy_service import SpacyService
 
 
@@ -61,9 +62,11 @@ async def test_process_text_increments_request_count():
     service._models['test_model'] = MagicMock()
 
     with patch('asyncio.to_thread', new_callable=AsyncMock, return_value=mock_doc):
-        await service.process_text('hello world', 'test_model')
+        result = await service.process_text('hello world', 'test_model')
 
     assert service.request_count == 1
+    assert isinstance(result, PredictResponse)
+    assert result == PredictResponse()
 
 
 @pytest.mark.asyncio
@@ -71,21 +74,28 @@ async def test_process_text_returns_entities():
     service = SpacyService()
 
     ent_per = MagicMock()
-    ent_per.label_ = 'PER'
+    ent_per.label_ = 'PERSON'
     ent_per.text = 'João'
 
-    ent_loc = MagicMock()
-    ent_loc.label_ = 'LOC'
-    ent_loc.text = 'Brasil'
+    ent_money = MagicMock()
+    ent_money.label_ = 'MONEY'
+    ent_money.text = 'R$ 500,00'
+
+    ent_date = MagicMock()
+    ent_date.label_ = 'DATE'
+    ent_date.text = 'amanhã'
 
     mock_doc = MagicMock()
-    mock_doc.ents = [ent_per, ent_loc]
+    mock_doc.ents = [ent_per, ent_money, ent_date]
     service._models['pt_core_news_sm'] = MagicMock()
 
     with patch('asyncio.to_thread', new_callable=AsyncMock, return_value=mock_doc):
-        result = await service.process_text('João está no Brasil', 'pt_core_news_sm')
+        result = await service.process_text('Transferir R$ 500,00 para João amanhã', 'pt_core_news_sm')
 
-    assert result == {'PER': 'João', 'LOC': 'Brasil'}
+    assert isinstance(result, PredictResponse)
+    assert result.person == 'João'
+    assert result.money == 'R$ 500,00'
+    assert result.date == 'amanhã'
 
 
 @pytest.mark.asyncio

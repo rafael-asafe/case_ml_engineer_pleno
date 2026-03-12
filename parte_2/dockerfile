@@ -28,6 +28,5 @@ COPY microservice_nre/ ./microservice_nre/
 COPY migrations/ ./migrations/
 COPY alembic.ini .
 
-USER nre_service_user
 
 CMD ["fastapi", "dev", "microservice_nre/main.py", "--port", "80", "--host", "0.0.0.0"]

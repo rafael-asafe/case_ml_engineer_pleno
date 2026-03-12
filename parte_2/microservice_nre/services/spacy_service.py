@@ -10,6 +10,14 @@ from datetime import datetime
 
 import spacy
 
+from microservice_nre.database.schemas import PredictResponse
+
+_LABEL_TO_FIELD: dict[str, str] = {
+    'MONEY': 'money',
+    'PERSON': 'person',
+    'DATE': 'date',
+}
+
 
 class SpacyService:
     """Gerencia modelos spaCy em memória e executa inferência de NER.
@@ -50,7 +58,7 @@ class SpacyService:
         """Remove todos os modelos do cache. Chamado no encerramento da aplicação."""
         self._models.clear()
 
-    async def process_text(self, text: str, model: str) -> dict[str, str]:
+    async def process_text(self, text: str, model: str) -> PredictResponse:
         """Executa reconhecimento de entidades nomeadas (NER) em um texto.
 
         Args:
@@ -59,12 +67,16 @@ class SpacyService:
                 carregado via ``add_model``; caso contrário, levanta ``KeyError``.
 
         Returns:
-            Dicionário ``{label: texto}`` com as entidades extraídas
-            (ex: ``{"PER": "João Silva", "LOC": "São Paulo"}``).
+            ``TransacaoEntidades`` com os campos ``Operacao``, ``Valor``,
+            ``Destino`` e ``Data`` preenchidos a partir das entidades extraídas.
 
         Raises:
             KeyError: Se o modelo não estiver no cache em memória.
         """
         self.request_count += 1
         output = await asyncio.to_thread(self._models[model], text)
-        return {e.label_: e.text for e in output.ents}
+
+        nlp_analysis = {
+            _LABEL_TO_FIELD[e.label_]: e.text for e in output.ents if e.label_ in _LABEL_TO_FIELD
+        }
+        return PredictResponse(**nlp_analysis)

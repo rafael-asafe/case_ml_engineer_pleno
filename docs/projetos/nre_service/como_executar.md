@@ -1,82 +1,28 @@
-# Configuração — Microserviço NER
+# Microserviço de Model Serving (NER)
 
-Referência completa de todas as variáveis de ambiente suportadas pelo microserviço.
-
-As variáveis são carregadas automaticamente de um arquivo `.env` na raiz de `parte_2/` via **Pydantic Settings**.
+API REST para registro, gerenciamento e inferência de modelos spaCy com Named Entity Recognition.
 
 ---
 
-## Variáveis de ambiente
+## Pré-requisitos
 
-### Logging
-
-| Variável      | Tipo    | Padrão  | Descrição                                      |
-|---------------|---------|---------|------------------------------------------------|
-| `LOG_LEVEL`   | string  | `INFO`  | Nível de log: `DEBUG`, `INFO`, `WARNING`, `ERROR` |
-| `CONSOLE_LOG` | boolean | `true`  | Habilita saída de log no console               |
-| `LOG_FILE`    | string  | —       | Caminho do arquivo de log (ex: `/data/logs/app.log`) |
-
-> Se `LOG_FILE` não for definido, os logs são escritos apenas no console (quando `CONSOLE_LOG=true`).
+- [Docker](https://docs.docker.com/get-docker/) instalado e em execução
+- [Docker Compose](https://docs.docker.com/compose/) v2.20+ (suporte a `depends_on.condition`)
 
 ---
 
-### Banco de dados
+## Como iniciar a aplicação
 
-| Variável       | Tipo   | Padrão | Descrição                             |
-|----------------|--------|--------|---------------------------------------|
-| `DATABASE_URL` | string | —      | URL de conexão SQLAlchemy (obrigatório) |
+### 1. Clonar o repositório
 
-**Exemplos de URL:**
-
-```env
-# SQLite local (desenvolvimento)
-DATABASE_URL=sqlite+aiosqlite:///database.db
-
-# SQLite via volume Docker (produção no container)
-DATABASE_URL=sqlite+aiosqlite:////data/database.db
+```bash
+git clone https://github.com/rafael-asafe/case_ml_engineer_pleno.git
+cd case_ml_engineer_pleno/parte_2
 ```
 
-> As quatro barras (`////`) são necessárias dentro do container para usar o caminho absoluto `/data/database.db`.
+### 2. Configurar variáveis de ambiente
 
----
-
-### Modelos spaCy
-
-| Variável              | Tipo    | Padrão | Descrição                                                     |
-|-----------------------|---------|--------|---------------------------------------------------------------|
-| `MAX_MODELS_IN_MEMORY`| integer | `5`    | Limite de modelos carregados simultaneamente em memória       |
-| `MODEL_PRELOAD`       | JSON    | `[]`   | Lista de modelos a serem carregados automaticamente no startup |
-| `MAX_TEXT_LENGTH`     | integer | `10000`| Tamanho máximo do texto aceito em `/predict/` (em caracteres) |
-
-**Exemplo de `MODEL_PRELOAD`:**
-
-```env
-# Um modelo
-MODEL_PRELOAD=["pt_core_news_sm"]
-
-# Múltiplos modelos
-MODEL_PRELOAD=["pt_core_news_sm","en_core_web_sm"]
-
-# Sem pré-carregamento
-MODEL_PRELOAD=[]
-```
-
-> Modelos em `MODEL_PRELOAD` são baixados e carregados na inicialização. Falhas individuais são logadas sem interromper o startup.
-
----
-
-### Health e métricas
-
-| Variável                  | Tipo    | Padrão | Descrição                                           |
-|---------------------------|---------|--------|-----------------------------------------------------|
-| `HEALTH_CHECK_INTERVAL`   | integer | `60`   | Intervalo em segundos entre verificações de saúde   |
-| `METRICS_RETENTION_DAYS`  | integer | `30`   | Dias de retenção dos logs de predição               |
-
----
-
-## Arquivo `.env` completo
-
-Exemplo de configuração para ambiente de produção com Docker:
+Crie um arquivo `.env` na raiz de `parte_2/`:
 
 ```env
 # Logging
@@ -84,10 +30,10 @@ LOG_LEVEL=INFO
 CONSOLE_LOG=true
 LOG_FILE=/data/logs/app.log
 
-# Banco de dados
+# Banco de dados (SQLite via volume Docker)
 DATABASE_URL=sqlite+aiosqlite:////data/database.db
 
-# Modelos spaCy
+# spaCy
 MAX_MODELS_IN_MEMORY=5
 MODEL_PRELOAD=["pt_core_news_sm"]
 MAX_TEXT_LENGTH=10000
@@ -97,42 +43,117 @@ HEALTH_CHECK_INTERVAL=60
 METRICS_RETENTION_DAYS=30
 ```
 
-Exemplo de configuração para desenvolvimento local:
+> **Atenção:** `DATABASE_URL` deve usar quatro barras (`////`) quando dentro do container para apontar ao volume `/data/database.db`.
 
-```env
-# Logging
-LOG_LEVEL=DEBUG
-CONSOLE_LOG=true
+### 3. Subir a aplicação
 
-# Banco de dados
-DATABASE_URL=sqlite+aiosqlite:///database.db
+```bash
+docker compose up --build
+```
 
-# Modelos spaCy
-MAX_MODELS_IN_MEMORY=3
-MODEL_PRELOAD=[]
-MAX_TEXT_LENGTH=10000
+O compose executa dois serviços em ordem:
 
-# Health / Métricas
-HEALTH_CHECK_INTERVAL=60
-METRICS_RETENTION_DAYS=30
+| Serviço   | O que faz                                              | Quando termina          |
+|-----------|--------------------------------------------------------|-------------------------|
+| `migrate` | Roda `alembic upgrade head` — cria/atualiza as tabelas | Ao concluir com sucesso |
+| `app`     | Sobe o servidor FastAPI na porta `8001`                | Aguarda `migrate`       |
+
+---
+
+## Verificar se a aplicação está saudável
+
+```bash
+curl http://localhost:8001/health
+```
+
+Resposta esperada:
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-03-11T22:08:58.860939",
+  "uptime_seconds": 3.87,
+  "requests_total": 0,
+  "models_in_memory": 0
+}
 ```
 
 ---
 
-## Configuração do Docker Compose
+## Usar a API
 
-O `compose.yml` monta um volume compartilhado entre os serviços `migrate` e `app`:
+### Registrar um modelo
 
-```yaml
-volumes:
-  - ./data:/data
+```bash
+curl -X POST http://localhost:8001/models/load \
+  -H "Content-Type: application/json" \
+  -d '{"model": "pt_core_news_sm"}'
 ```
 
-Isso garante que o banco de dados (`/data/database.db`) e os logs (`/data/logs/`) persistam entre reinicializações do container.
+> O modelo é baixado automaticamente via `python -m spacy download` se não estiver instalado.
 
-Para resetar o banco de dados e os logs:
+### Listar modelos registrados
+
+```bash
+curl http://localhost:8001/models/
+```
+
+### Executar predição NER
+
+```bash
+curl -X POST http://localhost:8001/predict/ \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Lula visitou São Paulo ontem.", "model": "pt_core_news_sm"}'
+```
+
+Resposta esperada:
+
+```json
+{
+  "entities": {
+    "PER": "Lula",
+    "LOC": "São Paulo"
+  }
+}
+```
+
+### Listar histórico de predições
+
+```bash
+curl http://localhost:8001/predict/list
+```
+
+### Remover um modelo
+
+```bash
+curl -X DELETE http://localhost:8001/models/{version}
+```
+
+---
+
+## Parar a aplicação
+
+```bash
+docker compose down
+```
+
+Para remover também os volumes (banco de dados e logs):
 
 ```bash
 docker compose down -v
-rm -rf data/
 ```
+
+---
+
+## Referência dos endpoints
+
+| Método   | Endpoint              | Descrição                        |
+|----------|-----------------------|----------------------------------|
+| `GET`    | `/health`             | Status e métricas da aplicação   |
+| `POST`   | `/models/load`        | Registra e carrega um modelo     |
+| `GET`    | `/models/`            | Lista modelos registrados        |
+| `DELETE` | `/models/{version}`   | Remove um modelo pelo ID         |
+| `POST`   | `/predict/`           | Executa inferência NER           |
+| `GET`    | `/predict/list`       | Lista histórico de predições     |
+
+Documentação interativa disponível em: `http://localhost:8001/docs`

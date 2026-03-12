@@ -19,23 +19,64 @@ plugins:
   - search
   - macros:
       include_dir: docs
+  
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [parte_1, parte_2]
 
 extra_css:
   - stylesheets/extra.css
 
 watch:
   - docs
+  - parte_1
+  - parte_2
 
 nav:
   - Início: index.md
   - Parte 1 — ETL PokeAPI:
-      - Como executar: projetos/analise_dado_pokeapi/analise_dados_pokeapi.md
-      - Documentação Técnica: projetos/analise_dado_pokeapi/arquitetura.md
-      - Débitos Técnicos: projetos/analise_dado_pokeapi/debitos_tecnicos.md
+      - Como executar: projetos/analise_dados_pokeapi/como_executar.md
+      - Documentação Técnica: projetos/analise_dados_pokeapi/arquitetura.md
+      - Débitos Técnicos: projetos/analise_dados_pokeapi/debitos_tecnicos.md
+      - Referência do Código:
+          - main: projetos/analise_dados_pokeapi/doc_strings/main.md
+          - API:
+              - api_handler: projetos/analise_dados_pokeapi/doc_strings/api/api_handler.md
+              - client: projetos/analise_dados_pokeapi/doc_strings/api/client.md
+          - Database:
+              - database: projetos/analise_dados_pokeapi/doc_strings/database/database.md
+              - models: projetos/analise_dados_pokeapi/doc_strings/database/models.md
+              - schemas: projetos/analise_dados_pokeapi/doc_strings/database/schemas.md
+          - Storage:
+              - storage: projetos/analise_dados_pokeapi/doc_strings/storage/storage.md
+          - Utils:
+              - logger: projetos/analise_dados_pokeapi/doc_strings/utils/logger.md
+              - settings: projetos/analise_dados_pokeapi/doc_strings/utils/settings.md
   - Parte 2 — Microserviço NER:
-      - Como executar: projetos/nre_service/micro_servico_model_serving.md
+      - Como executar: projetos/nre_service/como_executar.md
+      - Configuração: projetos/nre_service/configuracao.md
       - Arquitetura: projetos/nre_service/arquitetura.md
       - Referência da API: projetos/nre_service/api_reference.md
-      - Configuração: projetos/nre_service/configuracao.md
       - Desenvolvimento: projetos/nre_service/desenvolvimento.md
       - Débitos Técnicos: projetos/nre_service/debitos_tecnicos.md
+      - Referência do Código:
+          - main: projetos/nre_service/doc_strings/main.md
+          - lifespan: projetos/nre_service/doc_strings/lifespan.md
+          - middleware: projetos/nre_service/doc_strings/middleware.md
+          - Database:
+              - database: projetos/nre_service/doc_strings/database/database.md
+              - models: projetos/nre_service/doc_strings/database/models.md
+              - schemas: projetos/nre_service/doc_strings/database/schemas.md
+          - Routers:
+              - health: projetos/nre_service/doc_strings/routers/health.md
+              - model: projetos/nre_service/doc_strings/routers/model.md
+              - predict: projetos/nre_service/doc_strings/routers/predict.md
+          - Services:
+              - model_downloader: projetos/nre_service/doc_strings/services/model_downloader.md
+              - model_registry: projetos/nre_service/doc_strings/services/model_registry.md
+              - spacy_service: projetos/nre_service/doc_strings/services/spacy_service.md
+          - Utils:
+              - error_handler: projetos/nre_service/doc_strings/utils/error_handler.md
+              - logger: projetos/nre_service/doc_strings/utils/logger.md
+              - settings: projetos/nre_service/doc_strings/utils/settings.md

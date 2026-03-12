@@ -21,7 +21,7 @@ Case técnico composto por dois projetos independentes de engenharia de dados e 
 
 ```bash
 # Fedora/RHEL
-sudo dnf install python3.14
+sudo dnf install python3.14 python3.13
 
 # Poetry via pipx
 pip install pipx
@@ -186,7 +186,7 @@ curl -X POST http://localhost:8000/models/load \
 # Inferência NER
 curl -X POST http://localhost:8000/predict/ \
   -H "Content-Type: application/json" \
-  -d '{"text": "Lula visitou São Paulo ontem.", "model": "pt_core_news_sm"}'
+  -d '{"text": "John Smith transferred $5,000 to Goldman Sachs in New York last Monday.", "model": "en_core_web_sm"}'
 ```
 
 **Resposta da predição:**

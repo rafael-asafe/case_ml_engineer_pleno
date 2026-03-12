@@ -51,19 +51,20 @@ pokeapi_etl/
 4. Persiste no banco SQLite
 5. Exporta 4 tabelas em Parquet → `data/SOT/`
 
-### Como executar 
+### Como executar
 
 O passo a passo de como executar a aplicação pode ser acessado pelo servidor mkdocs ou no caminho direto:
 
-docs/projetos/analise_dado_pokeapi/como_executar.md
+`docs/projetos/analise_dado_pokeapi/como_executar.md`
+
+> Obs: o teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto.
 
 ```bash
 cd parte_1
 poetry --directory=./parte_1 install
 source $(poetry --directory=./parte_1 env info -p)/bin/activate
-mkdocs run 
+mkdocs run
 ```
-obs: o teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto. 
 
 Documentação: `http://localhost:8000/docs`
 
@@ -73,6 +74,7 @@ Documentação: `http://localhost:8000/docs`
 cd parte_1
 poetry run task test
 ```
+
 ---
 
 ## Parte 2 — Microserviço NER
@@ -100,35 +102,24 @@ microservice_nre/
 | `POST` | `/predict/` | Executa inferência NER |
 | `GET` | `/predict/list` | Histórico de predições |
 
-
 ### Como executar
 
 O passo a passo de como executar a aplicação pode ser acessado pelo servidor mkdocs ou no caminho direto:
 
-docs/projetos/nre_service/como_executar.md
+`docs/projetos/nre_service/como_executar.md`
 
-obs: os dois projetos compartilham o mesma doc
+> Obs: os dois projetos compartilham a mesma doc. O teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto.
 
 ```bash
 cd parte_1
 poetry --directory=./parte_2 install
 source $(poetry --directory=./parte_2 env info -p)/bin/activate
-mkdocs run 
+mkdocs run
 ```
-obs: o teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto. 
 
 Documentação: `http://localhost:8000`
 
 Documentação api: `http://localhost:8001/docs`
-
-### Testes
-
-```bash
-cd parte_1
-poetry run task test
-``
-
-
 
 ### Executar localmente
 

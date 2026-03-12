@@ -46,7 +46,7 @@ poetry run task run
 fastapi dev microservice_nre/main.py
 ```
 
-Acesse `http://localhost:8000/docs` para a interface interativa.
+Acesse `http://localhost:8001/docs` para a interface interativa.
 
 ---
 
@@ -175,7 +175,7 @@ Qualquer modelo publicado no hub do spaCy pode ser registrado via API:
 
 ```bash
 # Registrar via endpoint
-curl -X POST http://localhost:8000/models/load \
+curl -X POST http://localhost:8001/models/load \
   -H "Content-Type: application/json" \
   -d '{"model": "en_core_web_sm"}'
 ```

@@ -10,6 +10,16 @@ theme:
     accent: light green
   language: pt-BR
 
+markdown_extensions: 
+  - attr_list
+  - admonition
+  - pymdownx.tasklist
+
+plugins:
+  - search
+  - macros:
+      include_dir: docs
+
 extra_css:
   - stylesheets/extra.css
 
@@ -20,11 +30,12 @@ nav:
   - Início: index.md
   - Parte 1 — ETL PokeAPI:
       - Como executar: projetos/analise_dado_pokeapi/analise_dados_pokeapi.md
-      - Documentação Técnica: projetos/analise_dado_pokeapi/documentação.md
-      - Planejamento e Desenvolvimento: projetos/analise_dado_pokeapi/desenvolvimento.md
+      - Documentação Técnica: projetos/analise_dado_pokeapi/arquitetura.md
+      - Débitos Técnicos: projetos/analise_dado_pokeapi/debitos_tecnicos.md
   - Parte 2 — Microserviço NER:
-      - Como iniciar: projetos/micro_servico_model_serving.md
+      - Como executar: projetos/nre_service/micro_servico_model_serving.md
       - Arquitetura: projetos/nre_service/arquitetura.md
       - Referência da API: projetos/nre_service/api_reference.md
       - Configuração: projetos/nre_service/configuracao.md
       - Desenvolvimento: projetos/nre_service/desenvolvimento.md
+      - Débitos Técnicos: projetos/nre_service/debitos_tecnicos.md

@@ -99,21 +99,9 @@ database.db                         # banco SQLite com todas as tabelas
 
 Os arquivos Parquet gerados podem ser consumidos em qualquer ferramenta analítica compatível com o formato.
 
-**Exemplo com Databricks:**
+1. Faça upload dos arquivos `.parquet` para o Databricks ou um bucket S3
+2. Importe as tabelas via UI do Databricks, AWS Glue ou AWS Athena 
+    1. No desenvolvimento usei a ferramenta Data Ingestion do Databricks.
+3. Execute as análises presentes no notebook  
 
-1. Faça upload dos arquivos `.parquet` para o DBFS ou um bucket S3/ADLS
-2. Crie as tabelas via UI do Databricks ou com SQL:
-   ```sql
-   CREATE TABLE pokemon USING PARQUET LOCATION '/path/to/pokemon.parquet';
-   ```
-3. Importe as tabelas em um notebook e execute as análises
 
-**Exemplo com DuckDB (local):**
-
-```python
-import duckdb
-
-conn = duckdb.connect()
-df = conn.execute("SELECT * FROM read_parquet('data/SOT/pokemon/**/*.parquet')").df()
-print(df.head())
-```

@@ -8,7 +8,7 @@ Case técnico composto por dois projetos independentes de engenharia de dados e 
 
 ### [Parte 1 — ETL PokeAPI](projetos/analise_dado_pokeapi/analise_dados_pokeapi.md)
 
-Pipeline ETL que extrai dados de todos os pokémons da [PokéAPI](https://pokeapi.co/), persiste em banco SQLite e exporta em formato Parquet.
+Pipeline ETL que extrai dados de todos os pokémons da [PokeAPI](https://pokeapi.co/), persiste em banco SQLite e exporta em formato Parquet.
 
 **Tecnologias:** Python 3.14 · httpx · hishel · SQLAlchemy · Polars · Alembic · Docker
 
@@ -34,15 +34,9 @@ Microserviço REST para registro, gerenciamento e inferência de modelos spaCy c
 - Histórico de predições persistido no banco de dados
 - Rastreamento de requests por middleware (`X-Request-ID`, latência)
 
----
+## Uso de IA
 
-## Uso de IA no Desenvolvimento
+Foi utilizado o assistente **Claude Code** para revisão de código, criação de testes unitários e criação de documentações. 
 
-Foi utilizado o assistente **Claude Code** para apoio em revisão de código e criação de testes unitários.
+O assistente se mostrou eficiente para criar cenários de testes, padronizar logs e gerar docstrings, mas todo material está sendo revisado manualmente ao longo do projeto. 
 
-Contribuições:
-
-- **Testes — Parte 1**: criação de `test_schemas.py` (10 testes) e `test_storage.py` (5 testes) cobrindo schemas Pydantic e operações de persistência
-- **Refatorações**: abstração de criação de diretório em `storage/storage.py` e padronização de logs em `database/database.py`
-
-Veja mais detalhes em [Planejamento e Desenvolvimento](projetos/analise_dado_pokeapi/desenvolvimento.md).

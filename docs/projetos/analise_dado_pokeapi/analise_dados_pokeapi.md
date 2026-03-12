@@ -1,25 +1,25 @@
-# Análise de Dados com PokeAPI
-
-## Como executar
+# ETL PokeAPI
 
 Pipeline ETL que extrai dados de todos os pokémons da [PokéAPI](https://pokeapi.co/), persiste em banco SQLite e exporta em formato Parquet.
 
-## Pré-requisito
+---
+
+## Pré-requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) instalado
 
 ---
 
-## 1. Clone o repositório
+## Como executar
+
+### 1. Clone o repositório
 
 ```bash
-git clone <url-do-repo>
+git clone https://github.com/rafael-asafe/case_ml_engineer_pleno.git
 cd case_ml_engineer_pleno/parte_1
 ```
 
----
-
-## 2. Configure o arquivo `.env`
+### 2. Configure o arquivo `.env`
 
 Crie o arquivo `.env` na raiz de `parte_1/`:
 
@@ -51,9 +51,7 @@ KEEPALIVE_EXPIRY=10
 POKEAPI_BASE_URL=https://pokeapi.co/api/v2/
 ```
 
----
-
-## 3. Crie os arquivos de persistência local
+### 3. Crie os arquivos de persistência local
 
 ```bash
 mkdir -p data
@@ -62,9 +60,7 @@ touch database.db
 
 > O `database.db` precisa existir antes de subir o container — caso contrário o Docker cria um diretório no lugar.
 
----
-
-## 4. Execute
+### 4. Execute
 
 ```bash
 docker compose up
@@ -97,11 +93,27 @@ data/
 database.db                         # banco SQLite com todas as tabelas
 ```
 
-## Analise de dados
-- adicione as tabelas ao seu ambiente
+---
 
-- criei a tabela usando o UI do databricks
+## Análise de dados
 
-- importe as tabelas no notebook
+Os arquivos Parquet gerados podem ser consumidos em qualquer ferramenta analítica compatível com o formato.
 
-- execute notebook
+**Exemplo com Databricks:**
+
+1. Faça upload dos arquivos `.parquet` para o DBFS ou um bucket S3/ADLS
+2. Crie as tabelas via UI do Databricks ou com SQL:
+   ```sql
+   CREATE TABLE pokemon USING PARQUET LOCATION '/path/to/pokemon.parquet';
+   ```
+3. Importe as tabelas em um notebook e execute as análises
+
+**Exemplo com DuckDB (local):**
+
+```python
+import duckdb
+
+conn = duckdb.connect()
+df = conn.execute("SELECT * FROM read_parquet('data/SOT/pokemon/**/*.parquet')").df()
+print(df.head())
+```

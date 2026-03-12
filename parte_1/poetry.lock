@@ -508,7 +508,7 @@ version = "2.0.0"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 optional = false
 python-versions = ">=3.10"
-groups = ["main"]
+groups = ["main", "doc"]
 files = [
     {file = "griffelib-2.0.0-py3-none-any.whl", hash = "sha256:01284878c966508b6d6f1dbff9b6fa607bc062d8261c5c7253cb285b06422a7f"},
 ]
@@ -999,7 +999,7 @@ version = "2.0.3"
 description = "A Python handler for mkdocstrings."
 optional = false
 python-versions = ">=3.10"
-groups = ["main"]
+groups = ["main", "doc"]
 files = [
     {file = "mkdocstrings_python-2.0.3-py3-none-any.whl", hash = "sha256:0b83513478bdfd803ff05aa43e9b1fca9dd22bcd9471f09ca6257f009bc5ee12"},
     {file = "mkdocstrings_python-2.0.3.tar.gz", hash = "sha256:c518632751cc869439b31c9d3177678ad2bfa5c21b79b863956ad68fc92c13b8"},
@@ -2116,4 +2116,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.14,<4.0"
-content-hash = "4c292d8e33e014da8645e61f88638d60c1fb3543a1f0fadc95bbb88bf0cafa9e"
+content-hash = "d9c5bbefab2d4172f0b45445cc286c281a8a6c3150c517888f74559fc827ea26"

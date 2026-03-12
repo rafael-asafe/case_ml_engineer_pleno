@@ -95,6 +95,7 @@ Resposta esperada:
 ### Registrar um modelo
 
 ```bash
+# Fedora
 curl -X POST http://localhost:8001/models/load \
   -H "Content-Type: application/json" \
   -d '{"model": "pt_core_news_sm"}'
@@ -105,12 +106,14 @@ curl -X POST http://localhost:8001/models/load \
 ### Listar modelos registrados
 
 ```bash
+# Fedora
 curl http://localhost:8001/models/
 ```
 
 ### Executar predição NER
 
 ```bash
+# Fedora
 curl -X POST http://localhost:8001/predict/ \
   -H "Content-Type: application/json" \
   -d '{"text": "Can you send $45 to Michael on June 3?", "model": "en_core_web_sm"}'
@@ -129,12 +132,14 @@ Resposta esperada:
 ### Listar histórico de predições
 
 ```bash
+# Fedora
 curl http://localhost:8001/predict/list
 ```
 
 ### Remover um modelo
 
 ```bash
+# Fedora
 curl -X DELETE http://localhost:8001/models/{version}
 ```
 

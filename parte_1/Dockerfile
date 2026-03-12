@@ -24,4 +24,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app/pokeapi_etl
 
+USER pokeapi_etl_user
+
 CMD ["python", "main.py"]

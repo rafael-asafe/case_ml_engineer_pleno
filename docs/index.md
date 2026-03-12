@@ -36,9 +36,3 @@ Microserviço REST para registro, gerenciamento e inferência de modelos spaCy c
 -   Histórico de predições persistido no banco de dados
 -   Rastreamento de requests por middleware (`X-Request-ID`, latência)
 
-## Uso de IA
-
-Foi utilizado o assistente **Claude Code** para revisão de código, criação de testes unitários e criação de documentações. 
-
-O assistente se mostrou eficiente para criar cenários de testes, padronizar logs e gerar docstrings, mas todo material está sendo revisado manualmente ao longo do projeto. 
-

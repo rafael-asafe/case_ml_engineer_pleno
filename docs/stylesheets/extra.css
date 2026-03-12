@@ -1,0 +1,33 @@
+/* Configuração de parágrafos */
+.md-typeset p {
+  line-height: 1.8;
+  margin-bottom: 1.2em;
+  text-align: justify;
+}
+
+.md-typeset li p {
+  margin-bottom: 0.5em;
+}
+
+/* Formatação de parágrafos em sublistas */
+.md-typeset ul ul li p,
+.md-typeset ol ol li p,
+.md-typeset ul ol li p,
+.md-typeset ol ul li p {
+  line-height: 1.6;
+  margin-bottom: 0.3em;
+  text-align: justify;
+}
+
+/* Reduz tamanho do texto em sublistas */
+.md-typeset ul ul,
+.md-typeset ol ol,
+.md-typeset ul ol,
+.md-typeset ol ul {
+  font-size: 0.8em;
+}
+
+.md-typeset h2,
+.md-typeset h3 {
+  margin-top: 1.8em;
+}

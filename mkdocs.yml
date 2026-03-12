@@ -35,6 +35,7 @@ watch:
 
 nav:
   - Início: index.md
+  - Escolhas Técnicas: escolhas_tecnicas.md
   - Parte 1 — ETL PokeAPI:
       - Como executar: projetos/analise_dados_pokeapi/como_executar.md
       - Documentação Técnica: projetos/analise_dados_pokeapi/arquitetura.md

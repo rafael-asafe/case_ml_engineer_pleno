@@ -36,7 +36,7 @@ DATABASE_URL=sqlite+aiosqlite:////data/database.db
 
 # spaCy
 MAX_MODELS_IN_MEMORY=5
-MODEL_PRELOAD=["en_core_web_sm"]
+MODEL_PRELOAD='["en_core_web_sm","en_core_web_md","en_core_web_lg"]'
 MAX_TEXT_LENGTH=10000
 
 # Health / Métricas

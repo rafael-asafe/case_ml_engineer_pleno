@@ -1,12 +1,8 @@
-# Desenvolvimento do Micro Serviço de Model Serving
+# Microserviço de Model Serving (NER)
 
-docker build . -t microservice_ner
-docker run -d --name ner_instance -p 80:80 microservice_ner
+API REST para registro, gerenciamento e inferência de modelos spaCy com Named Entity Recognition.
 
-acesse http://localhost/docs para documentação do serviço
-
-
-# Como iniciar a aplicação
+---
 
 ## Pré-requisitos
 
@@ -15,23 +11,24 @@ acesse http://localhost/docs para documentação do serviço
 
 ---
 
-## 1. Clonar o repositório
+## Como iniciar a aplicação
+
+### 1. Clonar o repositório
 
 ```bash
-git clone <url-do-repositorio>
-cd parte_2
+git clone https://github.com/rafael-asafe/case_ml_engineer_pleno.git
+cd case_ml_engineer_pleno/parte_2
 ```
 
----
+### 2. Configurar variáveis de ambiente
 
-## 2. Configurar variáveis de ambiente
-
-Crie um arquivo `.env` na raiz do projeto. Exemplo mínimo:
+Crie um arquivo `.env` na raiz de `parte_2/`:
 
 ```env
 # Logging
 LOG_LEVEL=INFO
 CONSOLE_LOG=true
+LOG_FILE=/data/logs/app.log
 
 # Banco de dados (SQLite via volume Docker)
 DATABASE_URL=sqlite+aiosqlite:////data/database.db
@@ -48,9 +45,7 @@ METRICS_RETENTION_DAYS=30
 
 > **Atenção:** `DATABASE_URL` deve usar quatro barras (`////`) quando dentro do container para apontar ao volume `/data/database.db`.
 
----
-
-## 3. Subir a aplicação
+### 3. Subir a aplicação
 
 ```bash
 docker compose up --build
@@ -65,7 +60,7 @@ O compose executa dois serviços em ordem:
 
 ---
 
-## 4. Verificar se a aplicação está saudável
+## Verificar se a aplicação está saudável
 
 ```bash
 curl http://localhost:8000/health
@@ -85,9 +80,9 @@ Resposta esperada:
 
 ---
 
-## 5. Registrar e usar um modelo spaCy
+## Usar a API
 
-### 5.1 Registrar um modelo
+### Registrar um modelo
 
 ```bash
 curl -X POST http://localhost:8000/models/load \
@@ -95,15 +90,15 @@ curl -X POST http://localhost:8000/models/load \
   -d '{"model": "pt_core_news_sm"}'
 ```
 
-> O modelo é baixado automaticamente se não estiver instalado.
+> O modelo é baixado automaticamente via `python -m spacy download` se não estiver instalado.
 
-### 5.2 Listar modelos registrados
+### Listar modelos registrados
 
 ```bash
 curl http://localhost:8000/models/
 ```
 
-### 5.3 Executar predição NER
+### Executar predição NER
 
 ```bash
 curl -X POST http://localhost:8000/predict/ \
@@ -122,9 +117,21 @@ Resposta esperada:
 }
 ```
 
+### Listar histórico de predições
+
+```bash
+curl http://localhost:8000/predict/list
+```
+
+### Remover um modelo
+
+```bash
+curl -X DELETE http://localhost:8000/models/{version}
+```
+
 ---
 
-## 6. Parar a aplicação
+## Parar a aplicação
 
 ```bash
 docker compose down
@@ -142,7 +149,7 @@ docker compose down -v
 
 | Método   | Endpoint              | Descrição                        |
 |----------|-----------------------|----------------------------------|
-| `GET`    | `/health`             | Status da aplicação              |
+| `GET`    | `/health`             | Status e métricas da aplicação   |
 | `POST`   | `/models/load`        | Registra e carrega um modelo     |
 | `GET`    | `/models/`            | Lista modelos registrados        |
 | `DELETE` | `/models/{version}`   | Remove um modelo pelo ID         |

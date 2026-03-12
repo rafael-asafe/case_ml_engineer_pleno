@@ -1,3 +1,15 @@
+"""Configuração do cliente HTTP assíncrono para a PokéAPI.
+
+Monta o ``httpx.AsyncClient`` global com:
+- Cache HTTP via Hishel (SQLite) para evitar requisições duplicadas.
+- Retry automático com backoff exponencial via httpx-retries.
+- Limites de conexão simultânea configuráveis via Settings.
+- Event hooks para rastreamento de requisições (ID único, tempo de resposta).
+
+O cliente exposto (``async_client``) deve ser importado e reutilizado por todos
+os handlers de requisição para aproveitar o pool de conexões compartilhado.
+"""
+
 import time
 import uuid
 from functools import wraps
@@ -32,6 +44,32 @@ limits = httpx.Limits(
 
 
 def trata_erro_http_async(func: Callable[P, T]) -> Callable[P, T]:
+    """Decorador que adiciona tratamento padronizado de erros HTTP a corrotinas assíncronas.
+
+    Envolve a função decorada em um bloco try/except que captura os principais
+    tipos de falha de uma requisição HTTP, registra a mensagem de erro no logger
+    e re-lança a exceção para que o chamador possa tratá-la.
+
+    Args:
+        func: Corrotina assíncrona que realiza uma requisição HTTP e retorna um
+            ``httpx.Response``.
+
+    Returns:
+        Callable: Versão decorada da função com tratamento de erros e logging.
+
+    Raises:
+        httpx.HTTPStatusError: Quando o servidor retorna um código de status de erro
+            (4xx ou 5xx). O status code é incluído na mensagem de log.
+        httpx.RequestError: Em caso de falha de rede, timeout ou problema de conexão.
+        JSONDecodeError: Se a resposta não puder ser decodificada como JSON.
+        IOError: Para erros de entrada/saída durante a requisição.
+        Exception: Para qualquer outra exceção inesperada, logada com traceback completo.
+
+    Example:
+        >>> @trata_erro_http_async
+        ... async def busca_recurso(url: str) -> httpx.Response:
+        ...     return await client.get(url)
+    """
     @wraps(func)
     async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         try:
@@ -65,6 +103,19 @@ def trata_erro_http_async(func: Callable[P, T]) -> Callable[P, T]:
 
 
 async def before_request_async(request: httpx.Request) -> None:
+    """Hook executado antes de cada requisição HTTP para adicionar metadados de rastreamento.
+
+    Gera um UUID único por requisição (``X-Requests-ID``), registra o instante de
+    início (via ``time.monotonic()``) e o ID de execução do pipeline nas extensões
+    do objeto ``request``, permitindo correlacionar logs de requisição e resposta.
+
+    Args:
+        request: Objeto de requisição httpx que será enriquecido com os metadados.
+
+    Note:
+        Este hook é registrado automaticamente no ``async_client`` e não deve
+        ser chamado diretamente.
+    """
     request_id = str(uuid.uuid4())
     request.headers['X-Requests-ID'] = request_id
     request.extensions['request_id'] = request_id
@@ -73,6 +124,20 @@ async def before_request_async(request: httpx.Request) -> None:
 
 
 async def after_request_async(response: httpx.Response) -> None:
+    """Hook executado após cada resposta HTTP para registrar métricas da requisição.
+
+    Calcula o tempo decorrido desde o início da requisição (registrado em
+    ``before_request_async``) e emite uma linha de log estruturada com método,
+    URL, status code, tempo de resposta e ID único da requisição.
+
+    Args:
+        response: Objeto de resposta httpx contendo a requisição original e
+            as extensões preenchidas pelo hook de pré-requisição.
+
+    Note:
+        Caso ``start_time`` não esteja disponível nas extensões (ex.: em testes),
+        o campo de tempo de resposta é registrado como ``None``.
+    """
     request = response.request
     start = response.request.extensions.get('start_time', None)
     if start:

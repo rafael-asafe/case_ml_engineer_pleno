@@ -29,4 +29,4 @@ COPY migrations/ ./migrations/
 COPY alembic.ini .
 
 
-CMD ["fastapi", "dev", "microservice_nre/main.py", "--port", "80", "--host", "0.0.0.0"]
+CMD ["uvicorn","microservice_nre.main:app", "--port", "80", "--host", "0.0.0.0"]

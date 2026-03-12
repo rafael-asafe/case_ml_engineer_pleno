@@ -13,11 +13,12 @@ API REST para registro, gerenciamento e inferência de modelos spaCy com Named E
 
 ## Como iniciar a aplicação
 
-### 1. Clonar o repositório
+Após as etapas descritas no README.md
+
+### 1. Acesse o diretório
 
 ```bash
-git clone https://github.com/rafael-asafe/case_ml_engineer_pleno.git
-cd case_ml_engineer_pleno/parte_2
+cd parte_2
 ```
 
 ### 2. Configurar variáveis de ambiente
@@ -35,7 +36,7 @@ DATABASE_URL=sqlite+aiosqlite:////data/database.db
 
 # spaCy
 MAX_MODELS_IN_MEMORY=5
-MODEL_PRELOAD=["pt_core_news_sm"]
+MODEL_PRELOAD=["en_core_web_sm"]
 MAX_TEXT_LENGTH=10000
 
 # Health / Métricas
@@ -48,8 +49,17 @@ METRICS_RETENTION_DAYS=30
 ### 3. Subir a aplicação
 
 ```bash
+docker compose up
+# ou 
+docker compose --verbose up
+```
+
+Na primeira execução a imagem será buildada automaticamente. Nas seguintes, use `--build` apenas se o código ou dependências mudarem:
+
+```bash
 docker compose up --build
 ```
+
 
 O compose executa dois serviços em ordem:
 
@@ -103,17 +113,16 @@ curl http://localhost:8001/models/
 ```bash
 curl -X POST http://localhost:8001/predict/ \
   -H "Content-Type: application/json" \
-  -d '{"text": "Lula visitou São Paulo ontem.", "model": "pt_core_news_sm"}'
+  -d '{"text": "Can you send $45 to Michael on June 3?", "model": "en_core_web_sm"}'
 ```
 
 Resposta esperada:
 
 ```json
-{
-  "entities": {
-    "PER": "Lula",
-    "LOC": "São Paulo"
-  }
+{ 
+  "money":"45",
+  "person":"Michael",
+  "date":"June 3"
 }
 ```
 

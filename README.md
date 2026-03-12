@@ -66,7 +66,7 @@ source $(poetry --directory=./parte_1 env info -p)/bin/activate
 mkdocs run
 ```
 
-Documentação: `http://localhost:8000/docs`
+Endereço de acesso a doc: `http://localhost:8000/docs`
 
 ### Testes
 
@@ -108,27 +108,17 @@ O passo a passo de como executar a aplicação pode ser acessado pelo servidor m
 
 `docs/projetos/nre_service/como_executar.md`
 
-> Obs: os dois projetos compartilham a mesma doc. O teste orienta a criação de um repo, tive a decisão de criar o pyproject.toml apenas nas páginas de cada projeto.
-
 ```bash
 cd parte_1
 poetry --directory=./parte_2 install
 source $(poetry --directory=./parte_2 env info -p)/bin/activate
 mkdocs run
 ```
+> Obs: os dois projetos compartilham a mesma doc.
 
-Documentação: `http://localhost:8000`
+Endereço de acesso a doc: `http://localhost:8000`
 
-Documentação api: `http://localhost:8001/docs`
-
-### Executar localmente
-
-```bash
-cd parte_2
-poetry install
-source $(poetry env info -p)/bin/activate
-poetry run task run
-```
+Endereço de acesso a doc da api: `http://localhost:8001/docs`
 
 ### Testes
 
@@ -136,7 +126,6 @@ poetry run task run
 cd parte_2
 poetry run task test
 ```
-
 ---
 
 ## Estrutura do Repositório

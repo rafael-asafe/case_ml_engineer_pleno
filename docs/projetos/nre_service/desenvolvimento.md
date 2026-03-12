@@ -182,14 +182,3 @@ curl -X POST http://localhost:8001/models/load \
 
 O download é realizado automaticamente. Modelos disponíveis em [spacy.io/models](https://spacy.io/models).
 
-Para novos tipos de entidade, adicione o mapeamento em `SpacyService.process_text()`:
-
-```python
-label_map = {
-    "MONEY": "money",
-    "PER": "person",
-    "DATE": "date",
-    # Adicione novos labels aqui
-    "ORG": "organization",
-}
-```

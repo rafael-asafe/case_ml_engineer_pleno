@@ -102,6 +102,6 @@ Os arquivos Parquet gerados podem ser consumidos em qualquer ferramenta analíti
 1. Faça upload dos arquivos `.parquet` para o Databricks ou um bucket S3
 2. Importe as tabelas via UI do Databricks, AWS Glue ou AWS Athena 
     1. No desenvolvimento usei a ferramenta Data Ingestion do Databricks.
-3. Execute as análises presentes no notebook  
+3. Execute as análises presentes no [notebook](https://github.com/rafael-asafe/case_ml_engineer_pleno/blob/main/parte_1/data/pokeapi_analysis.ipynb)
 
 

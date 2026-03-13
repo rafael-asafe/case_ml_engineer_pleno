@@ -19,14 +19,6 @@
   text-align: justify;
 }
 
-/* Reduz tamanho do texto em sublistas */
-.md-typeset ul ul,
-.md-typeset ol ol,
-.md-typeset ul ol,
-.md-typeset ol ul {
-  font-size: 0.8em;
-}
-
 .md-typeset h2,
 .md-typeset h3 {
   margin-top: 1.8em;

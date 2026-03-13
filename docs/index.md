@@ -19,6 +19,7 @@ Pipeline ETL que extrai dados de todos os pokémons da [PokeAPI](https://pokeapi
 3.  Salva dados brutos em JSONL (`SOR/`)
 4.  Persiste no banco SQLite
 5.  Exporta 4 tabelas em Parquet (`SOT/`)
+6.  Notebook Spark faz a analise das tabelas.
 
 ---
 

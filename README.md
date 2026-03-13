@@ -66,12 +66,13 @@ O passo a passo de como executar a aplicação pode ser acessado pelo servidor m
 cd  case_ml_engineer_pleno
 poetry --directory=./parte_1 install
 source $(poetry --directory=./parte_1 env info -p)/bin/activate
-mkdocs serve
+python -m mkdocs serve
 ```
 
 ```bash
 # Powershell
 cd  case_ml_engineer_pleno
+poetry config virtualenvs.in-project true
 poetry --directory=./parte_1 install
 . "parte_1\$(poetry --directory=./parte_1 env info -p)\Scripts\activate.ps1"
 python -m mkdocs serve
@@ -117,14 +118,20 @@ O passo a passo de como executar a aplicação pode ser acessado pelo servidor m
 ```bash
 # Fedora/RHEL
 cd case_ml_engineer_pleno
+
+poetry config  virtualenvs.in-project true
+
 poetry --directory=./parte_2 install
 source $(poetry --directory=./parte_2 env info -p)/bin/activate
-mkdocs run
+python -m mkdocs serve
 ```
 
 ```bash
 # Powershell
 cd  case_ml_engineer_pleno
+
+poetry config virtualenvs.in-project true
+
 poetry --directory=./parte_2 install
 . "parte_2\$(poetry --directory=./parte_2 env info -p)\Scripts\activate.ps1"
 python -m mkdocs serve

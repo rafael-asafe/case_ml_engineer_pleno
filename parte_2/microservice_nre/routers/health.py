@@ -8,7 +8,7 @@ router = APIRouter(tags=['health'])
 
 @router.get('/health', response_model=None)
 async def health_status(request: Request) -> JSONResponse | dict:
-    """Confere saúde da aplicação."""
+    
     service = getattr(request.app.state, 'service', None)
 
     if not service:

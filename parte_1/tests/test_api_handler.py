@@ -1,8 +1,4 @@
-"""Testes unitários para os handlers de requisição HTTP da PokéAPI.
 
-Cobre ``busca_pagina``, ``paginacao``, ``busca_lista_pokemons`` e ``busca_pokemon``,
-verificando comportamento de sucesso, parâmetros enviados e propagação de erros HTTP.
-"""
 
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -16,7 +12,7 @@ from api.api_handler import busca_lista_pokemons, busca_pagina, busca_pokemon, p
 
 
 def test_busca_pagina_retorna_response() -> None:
-    """Verifica que busca_pagina retorna a resposta do cliente HTTP."""
+    
 
     async def _run():
         mock_response = MagicMock()
@@ -33,7 +29,7 @@ def test_busca_pagina_retorna_response() -> None:
 
 
 def test_busca_pagina_passa_params_corretos() -> None:
-    """Verifica que limit e offset são enviados como parâmetros da requisição."""
+    
 
     async def _run():
         mock_response = MagicMock()
@@ -52,7 +48,7 @@ def test_busca_pagina_passa_params_corretos() -> None:
 
 
 def test_busca_pagina_relanca_http_status_error() -> None:
-    """Verifica que HTTPStatusError é re-lançado após o log."""
+    
 
     async def _run():
         req = httpx.Request('GET', 'https://pokeapi.co/api/v2/pokemon')
@@ -72,7 +68,7 @@ def test_busca_pagina_relanca_http_status_error() -> None:
 
 
 def test_busca_pagina_relanca_request_error() -> None:
-    """Verifica que RequestError é re-lançado após o log."""
+    
 
     async def _run():
         mock_client = AsyncMock()
@@ -88,7 +84,7 @@ def test_busca_pagina_relanca_request_error() -> None:
 
 
 def test_paginacao_pagina_unica() -> None:
-    """Verifica que paginacao retorna os resultados quando total cabe em uma página."""
+    
 
     async def _run():
         mock_client = AsyncMock()
@@ -110,7 +106,7 @@ def test_paginacao_pagina_unica() -> None:
 
 
 def test_paginacao_multiplas_paginas() -> None:
-    """Verifica que paginacao agrega resultados de múltiplas páginas."""
+    
 
     async def _run():
         mock_client = AsyncMock()
@@ -146,7 +142,7 @@ def test_paginacao_multiplas_paginas() -> None:
 
 
 def test_busca_lista_pokemons_chama_paginacao_com_endpoint_correto() -> None:
-    """Verifica que busca_lista_pokemons delega para paginacao com '/pokemon'."""
+    
 
     async def _run():
         with patch(
@@ -165,7 +161,7 @@ def test_busca_lista_pokemons_chama_paginacao_com_endpoint_correto() -> None:
 
 
 def test_busca_pokemon_retorna_response() -> None:
-    """Verifica que busca_pokemon retorna a resposta do cliente HTTP."""
+    
 
     async def _run():
         mock_response = MagicMock()
@@ -185,7 +181,7 @@ def test_busca_pokemon_retorna_response() -> None:
 
 
 def test_busca_pokemon_relanca_http_status_error() -> None:
-    """Verifica que HTTPStatusError é re-lançado após o log."""
+    
 
     async def _run():
         req = httpx.Request('GET', 'https://pokeapi.co/api/v2/pokemon/1/')

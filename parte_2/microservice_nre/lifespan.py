@@ -1,8 +1,4 @@
-"""Gerenciamento do ciclo de vida da aplicação FastAPI.
 
-Separa a lógica de startup e shutdown do módulo principal,
-mantendo ``main.py`` responsável apenas pela composição da aplicação.
-"""
 
 import asyncio
 from collections.abc import AsyncGenerator
@@ -40,27 +36,7 @@ async def preload_model(model_name: str) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
-    """Gerencia o ciclo de vida da aplicação (startup e shutdown).
-
-    **Startup** (antes do ``yield``):
-
-    1. Instancia o ``SpacyService`` e o expõe em ``app.state.service`` para os handlers.
-       As tabelas já existem pois o serviço ``migrate`` (Alembic) roda antes no compose.
-    2. Consolida a lista de modelos a carregar: union entre os registrados no banco e
-       os definidos em ``MODEL_PRELOAD`` (settings), evitando duplicatas.
-    3. Carrega cada modelo via ``spacy.load`` em thread separada e o registra no serviço.
-       Falhas individuais são logadas como warning sem interromper o startup.
-
-    **Shutdown** (após o ``yield``):
-
-    - Limpa o cache em memória do ``SpacyService`` via ``service.clear()``.
-
-    Args:
-        app: Instância da aplicação FastAPI.
-
-    Yields:
-        Controle para o servidor após o startup concluído.
-    """
+    
     service = SpacyService()
     app.state.service = service
 

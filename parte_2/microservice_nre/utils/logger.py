@@ -1,14 +1,4 @@
-"""Configuração centralizada do logger da aplicação.
 
-Cria um logger nomeado pelo módulo com nível, formato e handlers definidos
-pelas variáveis de ambiente via ``Settings``. Um ``execution_id`` UUID único
-por processo é embutido em todas as mensagens, permitindo correlacionar logs
-de uma mesma instância da aplicação mesmo em ambientes com múltiplos containers.
-
-Handlers disponíveis (ativados via settings):
-    - Console (``CONSOLE_LOG=true``): escreve em ``stdout``.
-    - Arquivo (``LOG_FILE=<path>``): escreve em arquivo com encoding UTF-8.
-"""
 
 import logging
 import sys

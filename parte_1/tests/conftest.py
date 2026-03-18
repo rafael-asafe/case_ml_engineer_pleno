@@ -8,21 +8,10 @@ from factories import PokemonSchemaFactory
 
 @pytest.fixture()
 def make_response():
-    """Fixture que retorna uma factory de ``httpx.Response`` a partir de um PokemonSchema.
-
-    Reconstrói o payload no formato original da PokéAPI (com aliases como ``'id'`` e
-    dicionários aninhados para ``ability``, ``stat`` e ``type``) para que
-    ``PokemonSchema(**retorno.json())`` consiga re-parsear corretamente.
-    """
+    
 
     def _factory(pokemon: PokemonSchema = None) -> Response:
-        """Cria um ``httpx.Response`` a partir de um ``PokemonSchema`` validado.
-
-        Args:
-            pokemon: Instância de ``PokemonSchema`` cujos dados serão usados para
-                montar o payload no formato original da API. Se não fornecido,
-                uma instância é gerada automaticamente via ``PokemonSchemaFactory``.
-        """
+        
         if pokemon is None:
             pokemon = PokemonSchemaFactory.build()
 
@@ -58,7 +47,7 @@ def make_response():
 
 @pytest.fixture()
 def cria_tabelas():
-    """Cria e derruba todas as tabelas no banco em memória para cada teste."""
+    
     from database.database import engine
 
     table_registry.metadata.create_all(engine)

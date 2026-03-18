@@ -14,7 +14,7 @@ from itertools import chain
 from httpx import AsyncClient, Response
 
 from api.client import async_client, trata_erro_http_async
-from utils.settings import Settings
+from utils.settings import settings
 
 
 @trata_erro_http_async
@@ -28,7 +28,7 @@ async def busca_pagina(
 
     Args:
         url: Caminho relativo do endpoint (ex.: ``'/pokemon'``).
-        limit: Número máximo de itens por página (definido em ``Settings().LIMIT_OFFSET``).
+        limit: Número máximo de itens por página (definido em ``settings.LIMIT_OFFSET``).
         offset: Índice do primeiro item da página atual.
         async_client: Cliente HTTP assíncrono a ser utilizado. Por padrão usa o
             cliente global configurado em ``api.client``.
@@ -45,7 +45,9 @@ async def busca_pagina(
     return response
 
 
-async def paginacao(url: str, async_client: AsyncClient = async_client) -> list[dict[str, str]]:
+async def paginacao(
+    url: str, async_client: AsyncClient = async_client
+) -> list[dict[str, str]]:
     """Coleta todos os itens de um endpoint paginado da PokéAPI de forma concorrente.
 
     Executa uma primeira requisição para obter o total de registros e os itens
@@ -61,7 +63,7 @@ async def paginacao(url: str, async_client: AsyncClient = async_client) -> list[
             onde cada item é um dicionário com pelo menos ``'name'`` e ``'url'``.
 
     Note:
-        O tamanho de cada página é controlado por ``Settings().LIMIT_OFFSET``.
+        O tamanho de cada página é controlado por ``settings.LIMIT_OFFSET``.
         A primeira página é obtida com offset 0 (requisição inicial) e as
         demais são buscadas em paralelo a partir do offset ``LIMIT_OFFSET``.
     """
@@ -71,8 +73,8 @@ async def paginacao(url: str, async_client: AsyncClient = async_client) -> list[
     total = retorno.json().get('count')
 
     retornos = await gather(*[
-        busca_pagina(url, Settings().LIMIT_OFFSET, offset)
-        for offset in range(Settings().LIMIT_OFFSET, total, Settings().LIMIT_OFFSET)
+        busca_pagina(url, settings.LIMIT_OFFSET, offset)
+        for offset in range(settings.LIMIT_OFFSET, total, settings.LIMIT_OFFSET)
     ])
 
     paginas.extend(chain.from_iterable(r.json()['results'] for r in retornos))

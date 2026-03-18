@@ -45,7 +45,7 @@ class Settings(BaseSettings):
             (ex.: ``'https://pokeapi.co/api/v2/'``).
     """
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encondig="utf-8")
+    model_config = SettingsConfigDict(env_file='.env', env_file_encondig='utf-8')
 
     LOG_LEVEL: str
     CONSOLE_LOG: bool
@@ -54,10 +54,13 @@ class Settings(BaseSettings):
     NOME_ARQUIVO_SOR: str
     NOME_PASTA_SOT: str
     CAMINHO_DADOS: str
-    LIMIT_OFFSET:int
-    RETRY:int
+    LIMIT_OFFSET: int
+    RETRY: int
     BACKOFF_FACTOR: float
     CLIENT_MAX_CONNECTIONS: int
     MAX_KEEPALIVE_CONNECTIONS: int
     KEEPALIVE_EXPIRY: float
     POKEAPI_BASE_URL: str
+
+
+settings = Settings()

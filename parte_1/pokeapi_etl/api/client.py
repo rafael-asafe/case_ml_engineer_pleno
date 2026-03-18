@@ -3,7 +3,7 @@
 Monta o ``httpx.AsyncClient`` global com:
 - Cache HTTP via Hishel (SQLite) para evitar requisições duplicadas.
 - Retry automático com backoff exponencial via httpx-retries.
-- Limites de conexão simultânea configuráveis via Settings.
+- Limites de conexão simultânea configuráveis via settings.
 - Event hooks para rastreamento de requisições (ID único, tempo de resposta).
 
 O cliente exposto (``async_client``) deve ser importado e reutilizado por todos
@@ -22,12 +22,12 @@ import httpx
 from httpx_retries import Retry, RetryTransport
 
 from utils.logger import execution_id, logger
-from utils.settings import Settings
+from utils.settings import settings
 
 P = ParamSpec('P')
 T = TypeVar('T')
 
-retry = Retry(total=Settings().RETRY, backoff_factor=Settings().BACKOFF_FACTOR)
+retry = Retry(total=settings.RETRY, backoff_factor=settings.BACKOFF_FACTOR)
 
 retry_transport = RetryTransport(retry=retry)
 
@@ -37,9 +37,9 @@ transport_async = hishel.httpx.AsyncCacheTransport(
 )
 
 limits = httpx.Limits(
-    max_connections=Settings().CLIENT_MAX_CONNECTIONS,
-    max_keepalive_connections=Settings().MAX_KEEPALIVE_CONNECTIONS,
-    keepalive_expiry=Settings().KEEPALIVE_EXPIRY,
+    max_connections=settings.CLIENT_MAX_CONNECTIONS,
+    max_keepalive_connections=settings.MAX_KEEPALIVE_CONNECTIONS,
+    keepalive_expiry=settings.KEEPALIVE_EXPIRY,
 )
 
 
@@ -70,6 +70,7 @@ def trata_erro_http_async(func: Callable[P, T]) -> Callable[P, T]:
         ... async def busca_recurso(url: str) -> httpx.Response:
         ...     return await client.get(url)
     """
+
     @wraps(func)
     async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         try:
@@ -155,5 +156,5 @@ async_client = httpx.AsyncClient(
     event_hooks={'request': [before_request_async], 'response': [after_request_async]},
     transport=transport_async,
     limits=limits,
-    base_url=Settings().POKEAPI_BASE_URL,
+    base_url=settings.POKEAPI_BASE_URL,
 )

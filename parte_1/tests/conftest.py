@@ -1,7 +1,5 @@
 import pytest
 from httpx import Response
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
 
 from database.models import table_registry
 from database.schemas import PokemonSchema

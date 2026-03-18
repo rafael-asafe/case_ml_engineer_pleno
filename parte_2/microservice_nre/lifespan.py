@@ -16,10 +16,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from microservice_nre.database.database import engine
 from microservice_nre.database.models import MLModel
 from microservice_nre.services.model_downloader import download_model
-from microservice_nre.services.spacysettingservice import SpacyService
+from microservice_nre.services.spacy_service import SpacyService
 from microservice_nre.utils.logger import logger
+from microservice_nre.utils.settings import Settings
 
-from microservice_nre.utils.settings import settings
+_s = Settings()
 
 
 async def preload_model(model_name: str) -> None:
@@ -64,12 +65,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     """
     service = SpacyService()
     app.state.service = service
-<<<<<<< Updated upstream
 
     modelos = set(_s.MODEL_PRELOAD)
-=======
-    modelos = set(settings.MODEL_PRELOAD)
->>>>>>> Stashed changes
     await asyncio.gather(*[preload_model(modelo) for modelo in modelos])
 
     async with AsyncSession(engine, expire_on_commit=False) as session:

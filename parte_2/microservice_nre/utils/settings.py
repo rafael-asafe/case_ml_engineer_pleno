@@ -1,17 +1,13 @@
-<<<<<<< Updated upstream
 """Configurações da aplicação via variáveis de ambiente.
 
 Utiliza ``pydantic-settings`` para carregar e validar variáveis de ambiente,
 com suporte a arquivo ``.env``. Todos os campos sem valor padrão são obrigatórios.
 """
 
-=======
->>>>>>> Stashed changes
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-<<<<<<< Updated upstream
     """Configurações carregadas do ambiente ou arquivo ``.env``.
 
     Attributes:
@@ -32,8 +28,6 @@ class Settings(BaseSettings):
             Reservado para uso futuro em rotina de limpeza.
     """
 
-=======
->>>>>>> Stashed changes
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
     LOG_LEVEL: str
@@ -49,9 +43,3 @@ class Settings(BaseSettings):
     # Health / Metrics
     HEALTH_CHECK_INTERVAL: int
     METRICS_RETENTION_DAYS: int
-<<<<<<< Updated upstream
-=======
-
-
-settings = Settings()
->>>>>>> Stashed changes

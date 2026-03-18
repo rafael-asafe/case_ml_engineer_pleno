@@ -5,7 +5,7 @@ from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from microservice_nre.database.models import table_registry
-from microservice_nre.utils.settings import settings
+from microservice_nre.utils.settings import Settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -15,13 +15,9 @@ config = context.config
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-<<<<<<< Updated upstream
 
 config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)
 
-=======
-config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
->>>>>>> Stashed changes
 target_metadata = table_registry.metadata
 
 # other values from the config, defined by the needs of env.py,

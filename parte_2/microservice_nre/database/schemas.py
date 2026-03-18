@@ -8,7 +8,9 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from utils.settings import settings
+from microservice_nre.utils.settings import Settings
+
+_s = Settings()
 
 
 class MLModelSchema(BaseModel):
@@ -54,7 +56,6 @@ class PredictLogsPublic(BaseModel):
 
 
 class PredictRequest(BaseModel):
-<<<<<<< Updated upstream
     """Payload de entrada para o endpoint de inferência.
 
     Attributes:
@@ -64,9 +65,6 @@ class PredictRequest(BaseModel):
     """
 
     text: str = Field(..., min_length=1, max_length=_s.MAX_TEXT_LENGTH)
-=======
-    text: str = Field(..., min_length=1, max_length=settings.MAX_TEXT_LENGTH)
->>>>>>> Stashed changes
     model: str = Field(..., min_length=1)
 
 

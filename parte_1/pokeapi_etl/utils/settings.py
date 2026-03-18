@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 """Gerenciamento de configurações via variáveis de ambiente.
 
 Utiliza ``pydantic-settings`` para carregar e validar automaticamente as
@@ -6,13 +5,10 @@ variáveis de ambiente definidas no arquivo ``.env`` ou no ambiente do sistema.
 Todas as configurações são tipadas e validadas na inicialização da aplicação.
 """
 
-=======
->>>>>>> Stashed changes
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-<<<<<<< Updated upstream
     """Configurações centralizadas do pipeline ETL, carregadas do arquivo ``.env``.
 
     Todas as variáveis são obrigatórias (sem valor padrão), exceto onde indicado.
@@ -51,9 +47,6 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encondig="utf-8")
 
-=======
-    model_config = SettingsConfigDict(env_file='.env', env_file_encondig='utf-8')
->>>>>>> Stashed changes
     LOG_LEVEL: str
     CONSOLE_LOG: bool
     DATABASE_URL: str
@@ -68,9 +61,3 @@ class Settings(BaseSettings):
     MAX_KEEPALIVE_CONNECTIONS: int
     KEEPALIVE_EXPIRY: float
     POKEAPI_BASE_URL: str
-<<<<<<< Updated upstream
-=======
-
-
-settings = Settings()
->>>>>>> Stashed changes

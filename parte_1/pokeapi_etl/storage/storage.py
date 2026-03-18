@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 """Operações de armazenamento e persistência dos dados extraídos da PokéAPI.
 
 Contém a classe ``OperadorArmazenamento``, responsável pelas três etapas de carga:
@@ -10,25 +9,13 @@ O particionamento por data segue o padrão ``YYYY/MM/DD``, substituindo a
 string literal ``'today_date'`` nos caminhos configurados.
 """
 
-=======
-from collections.abc import Generator
->>>>>>> Stashed changes
 from datetime import date
-from functools import cache
 from pathlib import Path
 
-<<<<<<< Updated upstream
 from httpx import Response
 from sqlalchemy import select
 
 from database.database import exporta_para_parquet, get_session
-=======
-import polars as pl
-from httpx import Response
-from sqlalchemy import Engine, select
-
-from database.database import engine, get_session
->>>>>>> Stashed changes
 from database.models import (
     Pokemon,
     PokemonAbility,
@@ -38,10 +25,9 @@ from database.models import (
 )
 from database.schemas import PokemonSchema
 from utils.logger import logger
-from utils.settings import settings
+from utils.settings import Settings
 
 
-<<<<<<< Updated upstream
 class OperadorArmazenamento:
     """Classe utilitária com métodos de classe para persistência dos dados de Pokémons.
 
@@ -65,18 +51,10 @@ class OperadorArmazenamento:
             Path: Objeto ``Path`` apontando para o diretório criado ou já existente
                 (ex.: ``Path('./data/SOR/pokemons/2026/03/11/')``).
         """
-=======
-@cache
-class OperadorArmazenamento:
-    @staticmethod
-    def _build_folder_path(base: str) -> Path:
-
->>>>>>> Stashed changes
         folder = Path(base.replace('today_date', date.today().strftime('%Y/%m/%d')))
         folder.mkdir(parents=True, exist_ok=True)
         return folder
 
-<<<<<<< Updated upstream
     @classmethod
     def gerar_pokemons(cls, retornos: list[Response]) -> PokemonSchema:
         """Gera instâncias de ``PokemonSchema`` a partir de uma lista de respostas HTTP.
@@ -97,34 +75,13 @@ class OperadorArmazenamento:
             pydantic.ValidationError: Se o JSON da resposta não corresponder ao
                 schema esperado por ``PokemonSchema``.
         """
-=======
-    @staticmethod
-    def _gerar_pokemons(
-        retornos: list[Response],
-    ) -> Generator[PokemonSchema, None, None]:
->>>>>>> Stashed changes
         for retorno in retornos:
             yield PokemonSchema(**retorno.json())
-
-    @staticmethod
-    def _exporta_tabela_bd_para_parquet(
-        nome_tabela: str, destino_tabela: str, engine: Engine = engine
-    ) -> None:
-        try:
-            query = f'SELECT * FROM {nome_tabela}'
-            df = pl.read_database(query=query, connection=engine)
-            if nome_tabela == 'pokemon_ability':
-                df = df.with_columns(pl.col('is_hidden').cast(pl.Boolean))
-            df.write_parquet(destino_tabela, compression='snappy')
-        except Exception as e:
-            logger.error(f'Erro ao salvar tabela {nome_tabela!r} em parquet: {e}')
-            raise
 
     @classmethod
     def registra_dados_brutos(
         cls, retornos: list[Response], nome_pasta: str, nome_arquivo: str
     ) -> None:
-<<<<<<< Updated upstream
         """Persiste os dados brutos dos Pokémons em um arquivo JSONL (camada SOR).
 
         Cada linha do arquivo corresponde ao JSON serializado de um ``PokemonSchema``,
@@ -144,11 +101,6 @@ class OperadorArmazenamento:
         """
         pokemons = cls.gerar_pokemons(retornos)
         folder = cls._build_folder_path(Settings().CAMINHO_DADOS + nome_pasta)
-=======
-
-        pokemons = cls._gerar_pokemons(retornos)
-        folder = cls._build_folder_path(settings.CAMINHO_DADOS + nome_pasta)
->>>>>>> Stashed changes
         filepath = folder / nome_arquivo
 
         try:
@@ -162,7 +114,6 @@ class OperadorArmazenamento:
 
     @classmethod
     def registra_dados_bd(cls, retornos: list[Response]) -> None:
-<<<<<<< Updated upstream
         """Persiste os dados normalizados dos Pokémons no banco de dados relacional.
 
         Para cada Pokémon, verifica se já existe no banco (idempotência) antes de
@@ -185,28 +136,18 @@ class OperadorArmazenamento:
         try:
             pokemons = cls.gerar_pokemons(retornos)
 
-=======
-        try:
-            pokemons = cls._gerar_pokemons(retornos)
->>>>>>> Stashed changes
             with get_session() as session:
                 for pokemon in pokemons:
                     db_pokemon = session.scalar(
                         select(Pokemon).where(Pokemon.pokemon_id == pokemon.pokemon_id)
                     )
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
                     if db_pokemon:
                         logger.debug(
                             f'Pokemon {pokemon.name} já registrado, ignorando.'
                         )
                         continue
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
                     db_pokemon = Pokemon(
                         pokemon_id=pokemon.pokemon_id,
                         name=pokemon.name,
@@ -227,25 +168,18 @@ class OperadorArmazenamento:
                             PokemonType(type_name=t.type_name) for t in pokemon.types
                         ],
                     )
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
                     session.add(db_pokemon)
                     logger.debug(
                         f'Pokemon {db_pokemon.name} adicionado para persistência.'
                     )
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
         except Exception as e:
             logger.error(f'Erro ao salvar informações no banco de dados: {e}')
             raise
 
     @classmethod
     def exporta_tabelas_bd(cls) -> None:
-<<<<<<< Updated upstream
         """Exporta todas as tabelas do banco de dados para arquivos Parquet (camada SOT).
 
         Itera sobre todas as tabelas registradas em ``table_registry.metadata`` e,
@@ -257,16 +191,13 @@ class OperadorArmazenamento:
             Exception: Se a exportação de qualquer tabela falhar, o erro é logado
                 e re-lançado, interrompendo o processo para as tabelas restantes.
         """
-=======
-
->>>>>>> Stashed changes
         for nome_tabela in table_registry.metadata.tables.keys():
-            caminho_base = settings.CAMINHO_DADOS + settings.NOME_PASTA_SOT
+            caminho_base = Settings().CAMINHO_DADOS + Settings().NOME_PASTA_SOT
             try:
                 base = f'{caminho_base}{nome_tabela}/today_date/'
                 folder = cls._build_folder_path(base)
                 destino_tabela = str(folder / f'{nome_tabela}.parquet')
-                cls._exporta_tabela_bd_para_parquet(nome_tabela, destino_tabela)
+                exporta_para_parquet(nome_tabela, destino_tabela)
                 logger.info(f'Tabela {nome_tabela!r} exportada para {destino_tabela}')
             except Exception as e:
                 logger.error(f'Erro ao exportar tabela {nome_tabela!r}: {e}')

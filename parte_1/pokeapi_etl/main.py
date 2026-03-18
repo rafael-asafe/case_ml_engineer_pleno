@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 """Ponto de entrada do pipeline ETL da PokéAPI.
 
 Orquestra as três etapas do pipeline:
@@ -7,19 +6,15 @@ Orquestra as três etapas do pipeline:
 3. Persistência no banco de dados relacional e exportação para Parquet (camada SOT).
 """
 
-=======
->>>>>>> Stashed changes
 from asyncio import gather, run
 
 from api.api_handler import busca_lista_pokemons, busca_pokemon
 from storage.storage import OperadorArmazenamento
 from utils.logger import logger
-from utils.settings import settings
-
+from utils.settings import Settings
 
 
 async def main() -> None:
-<<<<<<< Updated upstream
     """Executa o pipeline ETL completo de forma assíncrona.
 
     Fluxo de execução:
@@ -44,17 +39,6 @@ async def main() -> None:
             lista_retornos, Settings().NOME_PASTA_SOR, Settings().NOME_ARQUIVO_SOR
         )
 
-=======
-
-    try:
-        index_pokemons = await busca_lista_pokemons()
-        lista_retornos = await gather(*[
-            busca_pokemon(item_index.get('url')) for item_index in index_pokemons
-        ])
-        OperadorArmazenamento.registra_dados_brutos(
-            lista_retornos, settings.NOME_PASTA_SOR, settings.NOME_ARQUIVO_SOR
-        )
->>>>>>> Stashed changes
         OperadorArmazenamento.registra_dados_bd(lista_retornos)
 
         OperadorArmazenamento.exporta_tabelas_bd()
@@ -64,9 +48,4 @@ async def main() -> None:
         raise
 
 
-<<<<<<< Updated upstream
 run(main())
-=======
-if __name__ == '__main__':
-    run(main())
->>>>>>> Stashed changes

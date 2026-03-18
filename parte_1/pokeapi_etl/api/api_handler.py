@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 """Handlers de requisição HTTP para a PokéAPI.
 
 Contém as funções responsáveis pela extração dos dados:
@@ -9,23 +8,19 @@ Todas as funções que fazem requisições HTTP utilizam o decorador
 ``trata_erro_http_async`` para tratamento padronizado de erros.
 """
 
-=======
->>>>>>> Stashed changes
 from asyncio import gather
 from itertools import chain
 
 from httpx import AsyncClient, Response
 
 from api.client import async_client, trata_erro_http_async
-from utils.settings import settings
-
+from utils.settings import Settings
 
 
 @trata_erro_http_async
 async def busca_pagina(
     url: str, limit: int, offset: int, async_client: AsyncClient = async_client
 ) -> Response:
-<<<<<<< Updated upstream
     """Busca uma página específica de resultados da API com paginação por offset.
 
     Realiza uma requisição GET com os parâmetros ``limit`` e ``offset`` para
@@ -45,15 +40,11 @@ async def busca_pagina(
         httpx.HTTPStatusError: Se o servidor retornar um código de erro HTTP (4xx, 5xx).
         httpx.RequestError: Em caso de falha de conexão ou timeout.
     """
-=======
-
->>>>>>> Stashed changes
     params = {'offset': offset, 'limit': limit}
     response = await async_client.get(url, params=params)
     return response
 
 
-<<<<<<< Updated upstream
 async def paginacao(url: str, async_client: AsyncClient = async_client) -> list[dict[str, str]]:
     """Coleta todos os itens de um endpoint paginado da PokéAPI de forma concorrente.
 
@@ -74,17 +65,10 @@ async def paginacao(url: str, async_client: AsyncClient = async_client) -> list[
         A primeira página é obtida com offset 0 (requisição inicial) e as
         demais são buscadas em paralelo a partir do offset ``LIMIT_OFFSET``.
     """
-=======
-async def paginacao(
-    url: str, async_client: AsyncClient = async_client
-) -> list[dict[str, str]]:
-
->>>>>>> Stashed changes
     paginas = []
     retorno = await async_client.get(url)
     paginas += retorno.json()['results']
     total = retorno.json().get('count')
-<<<<<<< Updated upstream
 
     retornos = await gather(*[
         busca_pagina(url, Settings().LIMIT_OFFSET, offset)
@@ -93,18 +77,10 @@ async def paginacao(
 
     paginas.extend(chain.from_iterable(r.json()['results'] for r in retornos))
 
-=======
-    retornos = await gather(*[
-        busca_pagina(url, settings.LIMIT_OFFSET, offset)
-        for offset in range(settings.LIMIT_OFFSET, total, settings.LIMIT_OFFSET)
-    ])
-    paginas.extend(chain.from_iterable((r.json()['results'] for r in retornos)))
->>>>>>> Stashed changes
     return paginas
 
 
 async def busca_lista_pokemons() -> list[dict[str, str]]:
-<<<<<<< Updated upstream
     """Retorna a lista completa de Pokémons disponíveis na PokéAPI.
 
     Atalho sobre ``paginacao`` que aponta para o endpoint ``/pokemon``.
@@ -114,9 +90,6 @@ async def busca_lista_pokemons() -> list[dict[str, str]]:
         list[dict[str, str]]: Lista com todos os Pokémons do índice, cada um
             representado por ``{'name': str, 'url': str}``.
     """
-=======
-
->>>>>>> Stashed changes
     retornos = await paginacao('/pokemon')
     return retornos
 
@@ -125,7 +98,6 @@ async def busca_lista_pokemons() -> list[dict[str, str]]:
 async def busca_pokemon(
     pokemon_url: str, async_client: AsyncClient = async_client
 ) -> Response:
-<<<<<<< Updated upstream
     """Busca os detalhes completos de um Pokémon específico.
 
     Realiza uma requisição GET para a URL absoluta do Pokémon retornada
@@ -144,8 +116,5 @@ async def busca_pokemon(
         httpx.HTTPStatusError: Se o servidor retornar um código de erro HTTP (4xx, 5xx).
         httpx.RequestError: Em caso de falha de conexão ou timeout.
     """
-=======
-
->>>>>>> Stashed changes
     response = await async_client.get(pokemon_url)
     return response

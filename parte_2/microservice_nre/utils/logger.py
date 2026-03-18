@@ -14,28 +14,26 @@ import logging
 import sys
 import uuid
 
-from microservice_nre.utils.settings import Settings
-
-_s = Settings()
+from microservice_nre.utils.settings import settings
 
 execution_id = str(uuid.uuid4())
 
 logger = logging.getLogger(__name__)
-logger.setLevel(_s.LOG_LEVEL)
+logger.setLevel(settings.LOG_LEVEL)
 
 formatter = logging.Formatter(
     f'[%(asctime)s] %(levelname)-8s %(message)s exec_id:[{execution_id}]',
     datefmt='%H:%M:%S',
 )
 
-if _s.CONSOLE_LOG:
+if settings.CONSOLE_LOG:
     handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(_s.LOG_LEVEL)
+    handler.setLevel(settings.LOG_LEVEL)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-if _s.LOG_FILE:
-    file_handler = logging.FileHandler(_s.LOG_FILE, encoding='utf-8')
-    file_handler.setLevel(_s.LOG_LEVEL)
+if settings.LOG_FILE:
+    file_handler = logging.FileHandler(settings.LOG_FILE, encoding='utf-8')
+    file_handler.setLevel(settings.LOG_LEVEL)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)

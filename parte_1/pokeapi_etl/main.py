@@ -11,7 +11,7 @@ from asyncio import gather, run
 from api.api_handler import busca_lista_pokemons, busca_pokemon
 from storage.storage import OperadorArmazenamento
 from utils.logger import logger
-from utils.settings import Settings
+from utils.settings import settings
 
 
 async def main() -> None:
@@ -36,7 +36,7 @@ async def main() -> None:
         ])
 
         OperadorArmazenamento.registra_dados_brutos(
-            lista_retornos, Settings().NOME_PASTA_SOR, Settings().NOME_ARQUIVO_SOR
+            lista_retornos, settings.NOME_PASTA_SOR, settings.NOME_ARQUIVO_SOR
         )
 
         OperadorArmazenamento.registra_dados_bd(lista_retornos)

@@ -8,9 +8,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from microservice_nre.utils.settings import Settings
-
-_s = Settings()
+from microservice_nre.utils.settings import settings
 
 
 class MLModelSchema(BaseModel):
@@ -64,7 +62,7 @@ class PredictRequest(BaseModel):
         model: Nome do modelo spaCy a ser utilizado na inferência.
     """
 
-    text: str = Field(..., min_length=1, max_length=_s.MAX_TEXT_LENGTH)
+    text: str = Field(..., min_length=1, max_length=settings.MAX_TEXT_LENGTH)
     model: str = Field(..., min_length=1)
 
 

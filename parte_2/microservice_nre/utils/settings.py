@@ -43,3 +43,6 @@ class Settings(BaseSettings):
     # Health / Metrics
     HEALTH_CHECK_INTERVAL: int
     METRICS_RETENTION_DAYS: int
+
+
+settings = Settings()

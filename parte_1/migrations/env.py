@@ -4,7 +4,6 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from pokeapi_etl.database.models import table_registry
-from pokeapi_etl.utils.settings import Settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -14,12 +13,16 @@ config = context.config
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
+<<<<<<< Updated upstream
 config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+=======
+config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
+>>>>>>> Stashed changes
 target_metadata = table_registry.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -29,6 +32,7 @@ target_metadata = table_registry.metadata
 
 
 def run_migrations_offline() -> None:
+<<<<<<< Updated upstream
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -41,6 +45,10 @@ def run_migrations_offline() -> None:
 
     """
     url = config.get_main_option("sqlalchemy.url")
+=======
+
+    url = config.get_main_option('sqlalchemy.url')
+>>>>>>> Stashed changes
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -53,12 +61,16 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+<<<<<<< Updated upstream
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
+=======
+
+>>>>>>> Stashed changes
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

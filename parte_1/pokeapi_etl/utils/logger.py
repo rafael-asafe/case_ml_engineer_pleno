@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 """Configuração centralizada de logging para o pipeline ETL.
 
 Fornece um logger pré-configurado (``logger``) e um ID de execução único
@@ -13,10 +14,13 @@ Uso típico::
     logger.error('Ocorreu um erro')
 """
 
+=======
+>>>>>>> Stashed changes
 import logging
 import sys
 import uuid
 
+<<<<<<< Updated upstream
 from utils.settings import Settings
 
 execution_id = str(uuid.uuid4())
@@ -58,10 +62,32 @@ def setup_logger(log_to_console: bool = True) -> logging.Logger:
     if log_to_console:
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(Settings().LOG_LEVEL)  # Mostra INFO e acima no terminal
+=======
+from utils.settings import settings
+
+execution_id = str(uuid.uuid4())
+
+
+def setup_logger(log_to_console: bool = True) -> logging.Logger:
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(settings.LOG_LEVEL)
+    formatter = logging.Formatter(
+        f'[%(asctime)s] %(levelname)-8s %(message)s exec_id:[{execution_id}]',
+        datefmt='%H:%M:%S',
+    )
+    if log_to_console:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(settings.LOG_LEVEL)
+>>>>>>> Stashed changes
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
     return logger
 
 
+<<<<<<< Updated upstream
 logger = setup_logger(log_to_console=Settings().CONSOLE_LOG)
+=======
+logger = setup_logger(log_to_console=settings.CONSOLE_LOG)
+>>>>>>> Stashed changes

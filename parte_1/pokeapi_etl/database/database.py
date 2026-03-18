@@ -6,18 +6,16 @@ para exportação de tabelas para o formato Parquet (camada SOT).
 
 from contextlib import contextmanager
 
-import polars as pl
 from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from utils.logger import logger
-from utils.settings import Settings
+from utils.settings import settings
 
-engine = create_engine(Settings().DATABASE_URL)
+engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 
 
+<<<<<<< Updated upstream
 def exporta_para_parquet(nome_tabela: str, destino_tabela: str, engine: Engine = engine) -> None:
     """Exporta uma tabela do banco de dados para o formato Parquet com compressão Snappy.
 
@@ -55,6 +53,8 @@ def exporta_para_parquet(nome_tabela: str, destino_tabela: str, engine: Engine =
         raise
 
 
+=======
+>>>>>>> Stashed changes
 @contextmanager
 def get_session() -> Session:
     """Gerenciador de contexto para obter e gerenciar uma sessão do banco de dados.

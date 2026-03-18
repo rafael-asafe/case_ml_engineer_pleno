@@ -1,9 +1,12 @@
+<<<<<<< Updated upstream
 """Decorator centralizado de tratamento de erros HTTP.
 
 Evita repetição de blocos ``try/except`` nos handlers de rota, mapeando
 exceções internas para respostas HTTP semanticamente corretas.
 """
 
+=======
+>>>>>>> Stashed changes
 import functools
 from collections.abc import Callable
 from http import HTTPStatus
@@ -12,6 +15,7 @@ from fastapi import HTTPException
 
 
 def handle_http_errors(func: Callable) -> Callable:
+<<<<<<< Updated upstream
     """Decorator que converte exceções internas em respostas HTTP adequadas.
 
     Deve ser aplicado em handlers de rota FastAPI assíncronos. ``HTTPException``
@@ -38,6 +42,8 @@ def handle_http_errors(func: Callable) -> Callable:
             async def load(...):
                 ...
     """
+=======
+>>>>>>> Stashed changes
 
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):

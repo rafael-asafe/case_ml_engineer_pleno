@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 """Configuração do cliente HTTP assíncrono para a PokéAPI.
 
 Monta o ``httpx.AsyncClient`` global com:
@@ -10,6 +11,8 @@ O cliente exposto (``async_client``) deve ser importado e reutilizado por todos
 os handlers de requisição para aproveitar o pool de conexões compartilhado.
 """
 
+=======
+>>>>>>> Stashed changes
 import time
 import uuid
 from functools import wraps
@@ -22,6 +25,7 @@ import httpx
 from httpx_retries import Retry, RetryTransport
 
 from utils.logger import execution_id, logger
+<<<<<<< Updated upstream
 from utils.settings import Settings
 
 P = ParamSpec('P')
@@ -40,11 +44,29 @@ limits = httpx.Limits(
     max_connections=Settings().CLIENT_MAX_CONNECTIONS,
     max_keepalive_connections=Settings().MAX_KEEPALIVE_CONNECTIONS,
     keepalive_expiry=Settings().KEEPALIVE_EXPIRY,
+=======
+from utils.settings import settings
+
+P = ParamSpec('P')
+T = TypeVar('T')
+retry = Retry(total=settings.RETRY, backoff_factor=settings.BACKOFF_FACTOR)
+retry_transport = RetryTransport(retry=retry)
+transport_async = hishel.httpx.AsyncCacheTransport(
+    next_transport=retry_transport, storage=hishel.AsyncSqliteStorage()
+)
+limits = httpx.Limits(
+    max_connections=settings.CLIENT_MAX_CONNECTIONS,
+    max_keepalive_connections=settings.MAX_KEEPALIVE_CONNECTIONS,
+    keepalive_expiry=settings.KEEPALIVE_EXPIRY,
+>>>>>>> Stashed changes
 )
 
 
 def trata_erro_http_async(func: Callable[P, T]) -> Callable[P, T]:
+<<<<<<< Updated upstream
     """Decorador que adiciona tratamento padronizado de erros HTTP a corrotinas assíncronas.
+=======
+>>>>>>> Stashed changes
 
     Envolve a função decorada em um bloco try/except que captura os principais
     tipos de falha de uma requisição HTTP, registra a mensagem de erro no logger
@@ -103,6 +125,7 @@ def trata_erro_http_async(func: Callable[P, T]) -> Callable[P, T]:
 
 
 async def before_request_async(request: httpx.Request) -> None:
+<<<<<<< Updated upstream
     """Hook executado antes de cada requisição HTTP para adicionar metadados de rastreamento.
 
     Gera um UUID único por requisição (``X-Requests-ID``), registra o instante de
@@ -116,6 +139,9 @@ async def before_request_async(request: httpx.Request) -> None:
         Este hook é registrado automaticamente no ``async_client`` e não deve
         ser chamado diretamente.
     """
+=======
+
+>>>>>>> Stashed changes
     request_id = str(uuid.uuid4())
     request.headers['X-Requests-ID'] = request_id
     request.extensions['request_id'] = request_id
@@ -124,6 +150,7 @@ async def before_request_async(request: httpx.Request) -> None:
 
 
 async def after_request_async(response: httpx.Response) -> None:
+<<<<<<< Updated upstream
     """Hook executado após cada resposta HTTP para registrar métricas da requisição.
 
     Calcula o tempo decorrido desde o início da requisição (registrado em
@@ -138,16 +165,24 @@ async def after_request_async(response: httpx.Response) -> None:
         Caso ``start_time`` não esteja disponível nas extensões (ex.: em testes),
         o campo de tempo de resposta é registrado como ``None``.
     """
+=======
+
+>>>>>>> Stashed changes
     request = response.request
     start = response.request.extensions.get('start_time', None)
     if start:
         elapsed = time.monotonic() - start
     else:
         elapsed = None
+<<<<<<< Updated upstream
 
     logger.info(
         f'<pokeapi - extract> {request.method} {request.url} {response.status_code} '
         f'{elapsed} {request.extensions.get("request_id")}'
+=======
+    logger.info(
+        f'<pokeapi - extract> {request.method} {request.url} {response.status_code} {elapsed} {request.extensions.get("request_id")}'
+>>>>>>> Stashed changes
     )
 
 
@@ -155,5 +190,9 @@ async_client = httpx.AsyncClient(
     event_hooks={'request': [before_request_async], 'response': [after_request_async]},
     transport=transport_async,
     limits=limits,
+<<<<<<< Updated upstream
     base_url=Settings().POKEAPI_BASE_URL,
+=======
+    base_url=settings.POKEAPI_BASE_URL,
+>>>>>>> Stashed changes
 )

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 """Schemas Pydantic para validação e transformação dos dados da PokéAPI.
 
 Cada schema corresponde a um recurso retornado pela API e realiza a limpeza
@@ -6,10 +7,13 @@ da API são achatados via ``computed_field``, e campos intermediários são excl
 da serialização com ``exclude=True``.
 """
 
+=======
+>>>>>>> Stashed changes
 from pydantic import BaseModel, Field, computed_field
 
 
 class PokemonTypeSchema(BaseModel):
+<<<<<<< Updated upstream
     """Schema de validação para o tipo elemental de um Pokémon.
 
     Recebe o formato aninhado da API (``{"slot": 1, "type": {"name": "grass", "url": "..."}}``),
@@ -24,16 +28,23 @@ class PokemonTypeSchema(BaseModel):
             (ex.: ``'grass'``, ``'fire'``). Campo computado, incluído na serialização.
     """
 
+=======
+>>>>>>> Stashed changes
     slot: int
     type_description: dict[str, str] = Field(alias='type', exclude=True)
 
     @computed_field
     def type_name(self) -> str:
+<<<<<<< Updated upstream
         """Extrai o nome do tipo a partir do dicionário aninhado retornado pela API."""
+=======
+
+>>>>>>> Stashed changes
         return self.type_description.get('name')
 
 
 class PokemonStatsSchema(BaseModel):
+<<<<<<< Updated upstream
     """Schema de validação para uma estatística base de um Pokémon.
 
     Recebe o formato aninhado da API (``{"base_stat": 45, "stat": {"name": "hp", "url": "..."}}``),
@@ -47,16 +58,23 @@ class PokemonStatsSchema(BaseModel):
             (ex.: ``'hp'``, ``'attack'``, ``'speed'``). Campo computado.
     """
 
+=======
+>>>>>>> Stashed changes
     base_stat: int
     stat_description: dict[str, str] = Field(alias='stat', exclude=True)
 
     @computed_field
     def stat_name(self) -> str:
+<<<<<<< Updated upstream
         """Extrai o nome da estatística a partir do dicionário aninhado retornado pela API."""
+=======
+
+>>>>>>> Stashed changes
         return self.stat_description.get('name')
 
 
 class PokemonAbilitySchema(BaseModel):
+<<<<<<< Updated upstream
     """Schema de validação para uma habilidade de um Pokémon.
 
     Recebe o formato aninhado da API (``{"ability": {"name": "overgrow", "url": "..."}, "is_hidden": false}``),
@@ -70,16 +88,23 @@ class PokemonAbilitySchema(BaseModel):
             (ex.: ``'overgrow'``, ``'chlorophyll'``). Campo computado.
     """
 
+=======
+>>>>>>> Stashed changes
     abilities_description: dict[str, str] = Field(alias='ability', exclude=True)
     is_hidden: bool
 
     @computed_field
     def ability_name(self) -> str:
+<<<<<<< Updated upstream
         """Extrai o nome da habilidade a partir do dicionário aninhado retornado pela API."""
+=======
+
+>>>>>>> Stashed changes
         return self.abilities_description.get('name')
 
 
 class PokemonSchema(BaseModel):
+<<<<<<< Updated upstream
     """Schema de validação principal para um Pokémon completo.
 
     Representa a resposta completa do endpoint ``/pokemon/{id}`` da PokéAPI,
@@ -101,6 +126,8 @@ class PokemonSchema(BaseModel):
             ``PokemonTypeSchema``.
     """
 
+=======
+>>>>>>> Stashed changes
     pokemon_id: int = Field(alias='id')
     name: str
     height: int

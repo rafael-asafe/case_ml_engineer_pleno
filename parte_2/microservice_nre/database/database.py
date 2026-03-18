@@ -2,9 +2,9 @@ from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from microservice_nre.utils.settings import Settings
+from utils.settings import settings
 
-engine = create_async_engine(Settings().DATABASE_URL)
+engine = create_async_engine(settings.DATABASE_URL)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:

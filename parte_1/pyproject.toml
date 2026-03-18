@@ -32,6 +32,7 @@ dev = [
     "taskipy (>=1.14.1,<2.0.0)",
     "pytest-env (>=1.5.0,<2.0.0)",
     "respx (>=0.22.0,<0.23.0)",
+    "pytest-asyncio (>=0.26.0)",
     "factory-boy (>=3.3.1,<4.0.0)",
     "faker (>=37.0.0,<38.0.0)",
 ]
@@ -57,7 +58,7 @@ DATABASE_URL = "sqlite:///:memory:"
 NOME_PASTA_SOR = "SOR/pokemons/today_date/"
 NOME_ARQUIVO_SOR = "pokemons.jsonl"
 NOME_PASTA_SOT = "SOT/"
-CAMINHO_DADOS = "/tmp/pokeapi_test/"
+CAMINHO_DADOS = ""
 LIMIT_OFFSET = "20"
 RETRY = "1"
 BACKOFF_FACTOR = "0.1"
@@ -69,6 +70,7 @@ POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/"
 
 [tool.pytest.ini_options]
 pythonpath = ["pokeapi_etl"]
+asyncio_mode = "auto"
 
 [tool.taskipy.tasks]
 lint = 'ruff check'

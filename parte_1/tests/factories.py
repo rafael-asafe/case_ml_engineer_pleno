@@ -46,7 +46,7 @@ class PokemonTypeSchemaFactory(factory.Factory):
         model = PokemonTypeSchema
 
     slot = factory.Sequence(lambda n: n + 1)
-    type = factory.LazyFunction(lambda: {'name': fake.word(), 'url': fake.url()})
+    type = factory.Sequence(lambda n: {'name': f'type_{n}', 'url': ''})
 
 
 class PokemonStatsSchemaFactory(factory.Factory):
@@ -64,7 +64,7 @@ class PokemonStatsSchemaFactory(factory.Factory):
         model = PokemonStatsSchema
 
     base_stat = factory.LazyFunction(lambda: fake.random_int(min=1, max=255))
-    stat = factory.LazyFunction(lambda: {'name': fake.word(), 'url': fake.url()})
+    stat = factory.Sequence(lambda n: {'name': f'stat_{n}', 'url': ''})
 
 
 class PokemonAbilitySchemaFactory(factory.Factory):
@@ -81,7 +81,7 @@ class PokemonAbilitySchemaFactory(factory.Factory):
     class Meta:
         model = PokemonAbilitySchema
 
-    ability = factory.LazyFunction(lambda: {'name': fake.word(), 'url': fake.url()})
+    ability = factory.Sequence(lambda n: {'name': f'ability_{n}', 'url': ''})
     is_hidden = factory.LazyFunction(lambda: fake.boolean())
 
 

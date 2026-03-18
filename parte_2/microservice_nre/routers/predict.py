@@ -31,7 +31,7 @@ async def predict(
     service: SpacyService = Depends(get_service),  # noqa: B008
     session: AsyncSession = Depends(get_session),  # noqa: B008
 ) -> PredictResponse:
-    """Realiza inferência utilizando o modelo ativo ou uma versão específica."""
+    
     modelo_db = await registry.get_by_name(body.model, session)
     result = await service.process_text(body.text, body.model)
     if modelo_db:
@@ -48,6 +48,6 @@ async def predict(
 
 @router.get('/list', response_model=list[PredictLogsPublic])
 async def list_predicts(session: AsyncSession = Depends(get_session)):
-    """Lista as predições realizadas."""
+    
     result = await session.execute(select(PredictLogs))
     return result.scalars().all()

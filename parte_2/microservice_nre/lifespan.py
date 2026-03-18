@@ -1,8 +1,4 @@
-"""Gerenciamento do ciclo de vida da aplicação FastAPI.
 
-Separa a lógica de startup e shutdown do módulo principal,
-mantendo ``main.py`` responsável apenas pela composição da aplicação.
-"""
 
 import asyncio
 from collections.abc import AsyncGenerator
@@ -18,9 +14,7 @@ from microservice_nre.database.models import MLModel
 from microservice_nre.services.model_downloader import download_model
 from microservice_nre.services.spacy_service import SpacyService
 from microservice_nre.utils.logger import logger
-from microservice_nre.utils.settings import Settings
-
-_s = Settings()
+from microservice_nre.utils.settings import settings
 
 
 async def preload_model(model_name: str) -> None:
@@ -42,31 +36,11 @@ async def preload_model(model_name: str) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
-    """Gerencia o ciclo de vida da aplicação (startup e shutdown).
-
-    **Startup** (antes do ``yield``):
-
-    1. Instancia o ``SpacyService`` e o expõe em ``app.state.service`` para os handlers.
-       As tabelas já existem pois o serviço ``migrate`` (Alembic) roda antes no compose.
-    2. Consolida a lista de modelos a carregar: union entre os registrados no banco e
-       os definidos em ``MODEL_PRELOAD`` (settings), evitando duplicatas.
-    3. Carrega cada modelo via ``spacy.load`` em thread separada e o registra no serviço.
-       Falhas individuais são logadas como warning sem interromper o startup.
-
-    **Shutdown** (após o ``yield``):
-
-    - Limpa o cache em memória do ``SpacyService`` via ``service.clear()``.
-
-    Args:
-        app: Instância da aplicação FastAPI.
-
-    Yields:
-        Controle para o servidor após o startup concluído.
-    """
+    
     service = SpacyService()
     app.state.service = service
 
-    modelos = set(_s.MODEL_PRELOAD)
+    modelos = set(settings.MODEL_PRELOAD)
     await asyncio.gather(*[preload_model(modelo) for modelo in modelos])
 
     async with AsyncSession(engine, expire_on_commit=False) as session:
